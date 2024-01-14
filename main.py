@@ -1,16 +1,20 @@
 from fastapi import FastAPI
-from pymongo import MongoClient
 from config.Client import Client
+from config.Logger import Logger
 
 from config.Settings import Settings
-
-app = FastAPI()
 
 ctx = {}
 ctx['settings'] = Settings()
 ctx['client'] = Client(ctx.get('settings'))
-# TODO: Add logger to the ctx
+ctx['logger'] = Logger(ctx.get('settings').log_level).get_logger()
+
+app = FastAPI()
+# TODO: Debug mode via env var
 
 @app.get("/health")
 def health():
+    logger = ctx.get('logger')
+    
+    logger.debug('Health check requested.')
     return {"status": "OK"}
