@@ -32,6 +32,8 @@ Environment variables included in the `.env` file will be used inside the applic
 You can also locally use a `local.env` file, as an alternative of `.env`. It is also excluded from git.
 
 The list of necessary environment variables are the following:
+* **DEBUG**: whether if FastAPI should start in debug mode or not
+  * default: _false_
 * **LOG_LEVEL**: from which level log will be printed out
   * default: _INFO_
   * possible values: _NOTSET_, _DEBUG_, _INFO_, _WARNING_, _ERROR_, _CRITICAL_

@@ -19,7 +19,6 @@ class Logger():
 					"()": "uvicorn.logging.DefaultFormatter",
 					"fmt": "%(levelprefix)s %(asctime)s %(message)s",
 					"datefmt": "%Y-%m-%d %H:%M:%S",
-
 				},
 			},
 			"handlers": {
