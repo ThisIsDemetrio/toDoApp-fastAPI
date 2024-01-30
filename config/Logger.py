@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from logging.config import dictConfig
 import logging
 
