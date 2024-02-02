@@ -1,29 +1,20 @@
 from config.get_context import get_context
-from models.ToDoNote import ToDoNoteModel
 import pytest
-
-from config.Client import Client
-from config.Logger import Logger
 from fastapi.testclient import TestClient
 
 from main import app
+from tests.utils import clear_todo_collection, get_context_for_tests
 
 client = TestClient(app)
 
+app.dependency_overrides[get_context] = get_context_for_tests
 
-# TODO: Move to another file
-def overriden_get_context():
-    logger: Logger = Logger('NOTSET').get_logger()
-    client: Client = Client("mongodb://localhost:27017", "toDoApp-unit-tests")
-
-    return {"client": client, "logger": logger}
-
-app.dependency_overrides[get_context] = overriden_get_context
-
-@pytest.fixture
-def setup_before_each_test():
-    # TODO: todo
-    pass
+@pytest.fixture(autouse=True)
+def setup_on_each_test():
+    # No operations before
+    yield
+    # After: we clear the "todo" collection
+    clear_todo_collection()
 
 def test_execute_full_cycle():
     note_id = ""
