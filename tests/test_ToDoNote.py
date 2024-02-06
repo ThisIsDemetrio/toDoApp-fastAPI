@@ -1,34 +1,51 @@
+import os
+from config import Client
 from config.get_context import get_context
+import json
 import pytest
 from fastapi.testclient import TestClient
 
 from main import app
-from tests.utils import clear_todo_collection, get_context_for_tests
+from tests.utils import clear_todo_collection, get_context_for_tests, get_todo_document_by_id, insert_documents_in_todo_collection
 
 client = TestClient(app)
-
 app.dependency_overrides[get_context] = get_context_for_tests
+
+NOTE_MOCKS_RELATIVE_PATH = 'tests/documents.json'
 
 @pytest.fixture(autouse=True)
 def setup_on_each_test():
-    # No operations before
+    # We open the document.json file and we retrieve the documents to be inserted in the DB
+    print('Preparing environment for tests')
+    file_path = os.path.join(os.getcwd(), NOTE_MOCKS_RELATIVE_PATH)
+    with open(file_path, 'r') as json_file:
+        toDoNotes = json.load(json_file)
+
+    insert_documents_in_todo_collection(toDoNotes)
+    
     yield
+
     # After: we clear the "todo" collection
     clear_todo_collection()
 
-def test_execute_full_cycle():
-    note_id = ""
-    # We have the following document. We save it, we retrieve it, we update it, then we delete it
-    note_title = "Call the dentist"
+def test_get_document_by_id():
+    get_response = client.get("/note/10001")
+
+    assert get_response.status_code == 200
+    assert get_response.json()["id"] == "10001"
+    assert get_response.json()["title"] == "Call the dentist"
+    assert get_response.json()["category"] == "health"
+
+def test_add_document():
     note = {
-        "id": note_id,
-        "title": note_title,
-        "description": "Number 555-123-1230, get appointment asap",
+        "id": "",
+        "title": "Buy flowers",
+        "description": "Roses or lilies",
         "completed": False,
         "dueDate": None,
         "remainders": [],
-        "tags": ["dentist"],
-        "category": "health"
+        "tags": [],
+        "category": "gifts"
     }
 
     # POST / 
@@ -39,18 +56,15 @@ def test_execute_full_cycle():
     note_id = post_response.json()["id"]
     assert note_id is not None
 
-    # GET /<id>
-    get_response = client.get(f"/note/{note_id}")
+    new_doc = get_todo_document_by_id(note_id)
+    assert new_doc is not None
+    assert new_doc["title"] == "Buy flowers"
+    assert new_doc["category"] == "gifts"
 
-    assert get_response.status_code == 200
-    assert get_response.json()["id"] == note_id
-    assert get_response.json()["title"] == note_title
-
-    # PATCH /<id>
-    updated_note_title = "Call dentist Samir"
+def test_update_document():
     updated_note = {
-        "id": note_id,
-        "title": updated_note_title,
+        "id": "10001",
+        "title": "Call dentist Samir",
         "description": "Number 555-123-1230, get appointment asap",
         "completed": False,
         "dueDate": None,
@@ -59,24 +73,22 @@ def test_execute_full_cycle():
         "category": "health"
     }
 
-    patch_response = client.patch(f"/note/{note_id}", json=updated_note)
+    patch_response = client.patch("/note/10001", json=updated_note)
 
     assert patch_response.status_code == 200
     assert patch_response.json()["status"] == "OK"
-    assert patch_response.json()["id"] == note_id
+    assert patch_response.json()["id"] == "10001"
 
-    # GET /<id> (to fetch the updated note)
-    get_on_updated_note_response = client.get(f"/note/{note_id}")
+    new_doc = get_todo_document_by_id("10001")
+    assert new_doc is not None
+    assert new_doc["title"] == "Call dentist Samir"
+    assert new_doc["category"] == "health"
 
-    assert get_on_updated_note_response.status_code == 200
-    assert get_on_updated_note_response.json()["id"] == note_id
-    assert get_on_updated_note_response.json()["title"] == updated_note_title
-
-    # DELETE /<id>
-    delete_response = client.delete(f"/note/{note_id}")
+def test_delete_document():
+    delete_response = client.delete("/note/10001")
 
     assert delete_response.status_code == 200
     assert delete_response.json()["status"] == "OK"
 
-
-
+    new_doc = get_todo_document_by_id("10001")
+    assert new_doc is None

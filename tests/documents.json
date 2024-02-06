@@ -1,0 +1,32 @@
+[
+    {
+        "id": "10001",
+        "title": "Call the dentist",
+        "description": "Number 555-123-1230, get appointment asap",
+        "completed": false,
+        "dueDate": null,
+        "remainders": [],
+        "tags": ["dentist"],
+        "category": "health"
+    },
+    {
+        "id": "10002",
+        "title": "Book a table to lunch with papa",
+        "description": "At Casero's pizza",
+        "completed": false,
+        "dueDate": "2021-11-10",
+        "remainders": ["2021-11-08T16:00:00.000Z"],
+        "tags": ["bookings"],
+        "category": "family"
+    },
+    {
+        "id": "10003",
+        "title": "Buy cat food",
+        "description": "",
+        "completed": true,
+        "dueDate": null,
+        "remainders": [],
+        "tags": ["pets", "groceries"],
+        "category": "pets"
+    }
+]

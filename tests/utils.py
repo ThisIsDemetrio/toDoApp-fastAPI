@@ -11,6 +11,14 @@ def get_context_for_tests():
 
     return {"client": client, "logger": logger}
 
-def clear_todo_collection(databaseName = TEST_DATABASE_NAME):
-    client: Client = Client(TEST_MONGODB_URL, databaseName)
+def insert_documents_in_todo_collection(documents, database_name = TEST_DATABASE_NAME):
+    client: Client = Client(TEST_MONGODB_URL, database_name)
+    client.get_todo_collection().insert_many(documents)
+
+def clear_todo_collection(database_name = TEST_DATABASE_NAME):
+    client: Client = Client(TEST_MONGODB_URL, database_name)
     client.get_todo_collection().drop()
+
+def get_todo_document_by_id(document_id, database_name = TEST_DATABASE_NAME):
+    client: Client = Client(TEST_MONGODB_URL, database_name)
+    return client.get_todo_collection().find_one({"id": document_id})
