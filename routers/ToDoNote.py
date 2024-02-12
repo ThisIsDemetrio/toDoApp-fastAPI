@@ -1,3 +1,4 @@
+from typing import Union
 from fastapi import APIRouter, Depends, HTTPException
 from config import error_handling
 from models.ToDoNote import ToDoNoteModel
@@ -7,7 +8,7 @@ from utils import generate_uuid
 
 router = APIRouter(prefix="/note")
 
-@router.get("/{id}", response_model=ToDoNoteModel)
+@router.get("/{id}", response_model=Union[ToDoNoteModel, dict])
 async def get_by_id(id: str, ctx: Annotated[dict, Depends(get_context)]):
     '''
     Returns the note with a specific "id" passed in query string.
@@ -20,7 +21,7 @@ async def get_by_id(id: str, ctx: Annotated[dict, Depends(get_context)]):
         if item:
             return item
         else:
-            raise HTTPException(status_code=404, detail="Item not found")
+            return error_handling.return_error(error_handling.A01, id=id)
     except Exception as e:
         logger.error(f'GET /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
@@ -57,7 +58,7 @@ async def update(id: str, note_to_update: ToDoNoteModel, ctx: Annotated[dict, De
         if result.modified_count == 1:
             return {"status": "OK", "id": id}
         else:
-            raise HTTPException(status_code=404, detail=f"Document with id {id} not found")
+            return error_handling.return_error(error_handling.A01, id=id)
     except Exception as e:
         logger.error(f'PATCH /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
@@ -75,6 +76,7 @@ async def setToCompleted(id: str, ctx: Annotated[dict, Depends(get_context)]):
         if result.modified_count == 1:
             return {"status": "OK", "id": id}
         else:
+            # TODO: Is this error because the note was already completed, or it has not been found?
             return error_handling.return_error(error_handling.C01)
     except Exception as e:
         logger.error(f'PATCH /setToCompleted/<id> returned error: {e}')
@@ -93,6 +95,7 @@ async def setToNotCompleted(id: str, ctx: Annotated[dict, Depends(get_context)])
         if result.modified_count == 1:
             return {"status": "OK", "id": id}
         else:
+            # TODO: Is this error because the note was already not completed, or it has not been found?
             return error_handling.return_error(error_handling.C02)
     except Exception as e:
         logger.error(f'PATCH /setToNotCompleted/<id> returned error: {e}')
@@ -111,7 +114,7 @@ async def delete(id: str, ctx: Annotated[dict, Depends(get_context)]):
         if result.deleted_count == 1:
             return {"status": "OK"}
         else:
-            raise HTTPException(status_code=404, detail=f"Document with id {id} not found.")
+            return error_handling.return_error(error_handling.A01, id=id)
     except Exception as e:
         logger.error(f'DELETE /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")

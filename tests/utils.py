@@ -1,6 +1,9 @@
 from config.Client import Client
 from config.Logger import Logger
+import os
+import json
 
+NOTE_MOCKS_RELATIVE_PATH = 'tests/documents.json'
 TEST_MONGODB_URL = "mongodb://localhost:27017"
 TEST_DATABASE_NAME = "toDoApp-tests"
 
@@ -10,6 +13,13 @@ def get_context_for_tests():
     client: Client = Client(TEST_MONGODB_URL, TEST_DATABASE_NAME)
 
     return {"client": client, "logger": logger}
+
+def open_mock_file(file_name = NOTE_MOCKS_RELATIVE_PATH):
+    file_path = os.path.join(os.getcwd(), file_name)
+    with open(file_path, 'r') as json_file:
+        file_content = json.load(json_file)
+        
+    return file_content
 
 def insert_documents_in_todo_collection(documents, database_name = TEST_DATABASE_NAME):
     client: Client = Client(TEST_MONGODB_URL, database_name)
