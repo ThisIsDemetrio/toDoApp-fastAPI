@@ -79,10 +79,48 @@ def test_update_document():
     assert patch_response.json()["status"] == "OK"
     assert patch_response.json()["id"] == "10001"
 
-    new_doc = get_todo_document_by_id("10001")
-    assert new_doc is not None
-    assert new_doc["title"] == "Call dentist Samir"
-    assert new_doc["category"] == "health"
+    updated_doc = get_todo_document_by_id("10001")
+    assert updated_doc is not None
+    assert updated_doc["title"] == "Call dentist Samir"
+    assert updated_doc["category"] == "health"
+
+def test_set_to_complete():
+    set_to_true_response = client.patch("/note/setToCompleted/10002")
+
+    assert set_to_true_response.status_code == 200
+    assert set_to_true_response.json()["status"] == "OK"
+
+    updated_doc = get_todo_document_by_id("10002")
+    assert updated_doc["completed"] is True
+
+def test_set_to_not_complete():
+    set_to_not_complete = client.patch("/note/setToNotCompleted/10003")
+
+    assert set_to_not_complete.status_code == 200
+    assert set_to_not_complete.json()["status"] == "OK"
+
+    updated_doc = get_todo_document_by_id("10002")
+    assert updated_doc["completed"] is False
+
+def test_fail_to_set_to_complete():
+    set_to_true_response = client.patch("/note/setToCompleted/10003")
+
+    assert set_to_true_response.status_code == 200
+    assert set_to_true_response.json()["status"] == "KO"
+    assert set_to_true_response.json()["code"] == "C01"
+
+    updated_doc = get_todo_document_by_id("10003")
+    assert updated_doc["completed"] is True
+
+def test_fail_set_to_not_complete():
+    set_to_not_complete = client.patch("/note/setToNotCompleted/10002")
+
+    assert set_to_not_complete.status_code == 200
+    assert set_to_not_complete.json()["status"] == "KO"
+    assert set_to_not_complete.json()["code"] == "C02"
+
+    updated_doc = get_todo_document_by_id("10002")
+    assert updated_doc["completed"] is False
 
 def test_delete_document():
     delete_response = client.delete("/note/10001")
@@ -90,5 +128,5 @@ def test_delete_document():
     assert delete_response.status_code == 200
     assert delete_response.json()["status"] == "OK"
 
-    new_doc = get_todo_document_by_id("10001")
-    assert new_doc is None
+    deleted_doc = get_todo_document_by_id("10001")
+    assert deleted_doc is None
