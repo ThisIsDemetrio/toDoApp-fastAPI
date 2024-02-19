@@ -2,12 +2,16 @@ A01 = "A01"
 A02 = "A02"
 C01 = "C01"
 C02 = "C02"
+C03 = "C03"
+U00 = "U00"
 
 error_codes: dict = {
     "A01": "idNotFound",
     "A02": "dateNotValid",
     "C01": "noteAlreadyCompleted",
-    "C02": "noteNotCompletedYet"
+    "C02": "noteNotCompletedYet",
+    "C03": "remainderNotFound",
+    "U00": "unhandledException"
 }
 
 def return_error(error_code, **kwargs):

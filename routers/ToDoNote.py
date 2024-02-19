@@ -104,7 +104,7 @@ async def setToCompleted(ctx: Context, id: str):
     except Exception as e:
         logger.error(f'PATCH /setToCompleted/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
-
+    
 @router.patch("/setToNotCompleted/{id}", response_model=dict)
 async def setToNotCompleted(ctx: Context, id: str):
     '''
@@ -124,6 +124,85 @@ async def setToNotCompleted(ctx: Context, id: str):
         logger.error(f'PATCH /setToNotCompleted/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
+@router.patch("/addRemainder/{id}", response_model=dict)
+async def add_remainder(ctx: Context, id: str, new: str):
+    '''
+    Add a new remainder to an existing note
+    '''
+    logger = ctx.get('logger')
+    remainder = new
+    
+    if not is_valid_iso_date(remainder):
+        return error_handling.return_error(error_handling.A02, key="payload")
+
+    try:
+        collection = ctx.get('client').get_todo_collection()
+
+        result = collection.update_one({"id":id}, {"$push": {"remainders": remainder}})   
+        if result.modified_count == 1:
+            return {"status": "OK", "id": id}
+        else:
+            # NOTE: I am assuming the only error can occur is because the document has not been found
+            return error_handling.return_error(error_handling.A01)
+    except Exception as e:
+        logger.error(f'PATCH /addRemainder/<id> returned error: {e}')
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+@router.patch("/deleteRemainder/{id}", response_model=dict)
+async def delete_remainder(ctx: Context, id: str, old: str):
+    '''
+    Remove an existing remainder to an existing note
+    '''
+    logger = ctx.get('logger')
+    remainder = old
+    
+    if not is_valid_iso_date(remainder):
+        return error_handling.return_error(error_handling.A02, key="payload")
+
+    try:
+        collection = ctx.get('client').get_todo_collection()
+
+        result = collection.update_one({"id":id}, {"$pull": {"remainders": remainder}})   
+        if result.modified_count == 1:
+            return {"status": "OK", "id": id}
+        else:
+            # TODO: Is this error because the remainder didn't exist, or the document has not been found?
+            return error_handling.return_error(error_handling.C03)
+    except Exception as e:
+        logger.error(f'PATCH /deleteRemainder/<id> returned error: {e}')
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    
+@router.patch("/updateRemainder/{id}", response_model=dict)
+async def update_remainder(ctx: Context, id: str, old: str, new: str):
+    '''
+    Change a remainder, replacing an existing one with a new one, to an existing note
+    '''
+    logger = ctx.get('logger')
+    old_remainder = old
+    new_remainder = new
+    
+    if not is_valid_iso_date(old_remainder):
+        return error_handling.return_error(error_handling.A02, key="new_remainder")
+    if not is_valid_iso_date(new_remainder):
+        return error_handling.return_error(error_handling.A02, key="old_remainder")
+
+    try:
+        collection = ctx.get('client').get_todo_collection()
+
+        pull_result = collection.update_one({"id":id}, {"$pull": {"remainders": old_remainder}})
+        if pull_result.modified_count != 1:
+            # TODO: Is this error because the remainder didn't exist, or the document has not been found?
+            return error_handling.return_error(error_handling.C03)
+        
+        push_result = collection.update_one({"id":id}, {"$push": {"remainders": new_remainder}})
+        if push_result.modified_count == 1:
+            return {"status": "OK", "id": id}
+        else:
+            return error_handling.return_error(error_handling.U00)
+    except Exception as e:
+        logger.error(f'PATCH /updateRemainder/<id> returned error: {e}')
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
 @router.delete("/{id}", response_model=dict)
 async def delete(ctx: Context, id: str):
     '''

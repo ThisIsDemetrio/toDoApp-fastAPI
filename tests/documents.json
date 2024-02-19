@@ -39,7 +39,7 @@
         "description": "",
         "completed": false,
         "dueDate": null,
-        "remainders": ["2021-11-17T20:00:00.000Z"],
+        "remainders": ["2021-11-17T20:00:00.000Z", "2021-11-17T20:30:00.000Z"],
         "tags": ["gym"],
         "category": "health"
     },

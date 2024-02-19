@@ -113,6 +113,33 @@ def test_set_to_not_complete():
     updated_doc = get_todo_document_by_id("10002")
     assert updated_doc["completed"] is False
 
+def test_add_remainder():
+    add_remainder = client.patch("/note/addRemainder/10001?new=2021-11-09T13:45:00.000Z")
+
+    assert add_remainder.status_code == 200
+    assert add_remainder.json()["status"] == "OK"
+
+    updated_doc = get_todo_document_by_id("10001")
+    assert updated_doc["remainders"] == ["2021-11-09T13:45:00.000Z"]
+
+
+def test_remove_remainder():
+    add_remainder = client.patch("/note/deleteRemainder/10002?old=2021-11-08T16:00:00.000Z")
+
+    assert add_remainder.status_code == 200
+    assert add_remainder.json()["status"] == "OK"
+
+    updated_doc = get_todo_document_by_id("10002")
+    assert updated_doc["remainders"] == []
+
+def test_replace_remainder():
+    add_remainder = client.patch("/note/updateRemainder/10004?old=2021-11-17T20:30:00.000Z&new=2021-11-17T20:45:00.000Z")
+
+    assert add_remainder.status_code == 200
+    assert add_remainder.json()["status"] == "OK"
+
+    updated_doc = get_todo_document_by_id("10004")
+    assert updated_doc["remainders"] == ["2021-11-17T20:00:00.000Z", "2021-11-17T20:45:00.000Z"]
 
 def test_delete_document():
     delete_response = client.delete("/note/10001")
