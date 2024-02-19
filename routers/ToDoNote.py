@@ -1,5 +1,7 @@
-from typing import Union
+from datetime import datetime
+from typing import List, Optional, Union
 from fastapi import APIRouter, Depends, HTTPException
+from application.utils import is_valid_iso_date
 from config import error_handling
 from models.ToDoNote import ToDoNoteModel
 from typing_extensions import Annotated
@@ -7,6 +9,30 @@ from config.get_context import get_context
 from utils import generate_uuid
 
 router = APIRouter(prefix="/note")
+
+
+@router.get("/", response_model=Union[List[ToDoNoteModel], dict])
+async def get_all(ctx: Annotated[dict, Depends(get_context)], before: Optional[str] = None, after: Optional[str] = None):
+    logger = ctx.get('logger')
+    query = {}
+    
+    if (before is not None):
+        if not is_valid_iso_date(before):
+            return error_handling.return_error(error_handling.A02, key="before")
+        query["$lte"] = before
+    
+    if (after is not None):
+        if not is_valid_iso_date(after):
+            return error_handling.return_error(error_handling.A02, key="after")
+        query["$gte"] = after
+        
+    try:
+        collection = ctx.get('client').get_todo_collection()
+        return collection.find({ "creationDate": query } if len(query.keys()) > 0 else {}).limit(50)
+    except Exception as e:
+        logger.error(f'GET / returned error: {e}')
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+
 
 @router.get("/{id}", response_model=Union[ToDoNoteModel, dict])
 async def get_by_id(id: str, ctx: Annotated[dict, Depends(get_context)]):
@@ -26,8 +52,6 @@ async def get_by_id(id: str, ctx: Annotated[dict, Depends(get_context)]):
         logger.error(f'GET /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-##TODO: getAll
-
 @router.post("/", response_model=dict)
 async def create(item: ToDoNoteModel, ctx: Annotated[dict, Depends(get_context)]):
     '''
@@ -38,7 +62,8 @@ async def create(item: ToDoNoteModel, ctx: Annotated[dict, Depends(get_context)]
         collection = ctx.get('client').get_todo_collection()
 
         item_id = generate_uuid()
-        collection.insert_one({**item.model_dump(), "id": item_id})
+        current_iso_date = datetime.now().date().isoformat()
+        collection.insert_one({**item.model_dump(), "id": item_id, "creationDate": current_iso_date })
         return {"status": "OK", "id": item_id}
     except Exception as e:
         logger.error(f'POST /<id> returned error: {e}')

@@ -1,9 +1,11 @@
 A01 = "A01"
+A02 = "A02"
 C01 = "C01"
 C02 = "C02"
 
 error_codes: dict = {
     "A01": "idNotFound",
+    "A02": "dateNotValid",
     "C01": "noteAlreadyCompleted",
     "C02": "noteNotCompletedYet"
 }

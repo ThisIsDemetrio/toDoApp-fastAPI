@@ -19,12 +19,30 @@ def setup_on_each_test():
     clear_todo_collection()
 
 def test_get_document_by_id():
-    get_response = client.get("/note/10001")
+    response = client.get("/note/10001")
 
-    assert get_response.status_code == 200
-    assert get_response.json()["id"] == "10001"
-    assert get_response.json()["title"] == "Call the dentist"
-    assert get_response.json()["category"] == "health"
+    assert response.status_code == 200
+    assert response.json()["id"] == "10001"
+    assert response.json()["title"] == "Call the dentist"
+    assert response.json()["category"] == "health"
+
+def test_get_all():
+    response = client.get("/note")
+
+    assert response.status_code == 200
+    assert len(response.json()) == 5
+
+    response = client.get("/note?after=2021-11-17T00:00:00.000Z")
+    assert response.status_code == 200
+    assert len(response.json()) == 2
+
+    response = client.get("/note?after=2021-11-06T00:00:00.000Z&before=2021-11-17T23:59:59.999Z")
+    assert response.status_code == 200
+    assert len(response.json()) == 4
+
+    response = client.get("/note?after=1991-01-01T00:00:00.000Z&before=1991-12-31T23:59:59.999Z")
+    assert response.status_code == 200
+    assert len(response.json()) == 0
 
 def test_add_document():
     note = {
@@ -45,14 +63,18 @@ def test_add_document():
     note_id = post_response.json()["id"]
     assert note_id is not None
 
+
     new_doc = get_todo_document_by_id(note_id)
     assert new_doc is not None
+    assert new_doc["id"] == note_id
     assert new_doc["title"] == "Buy flowers"
     assert new_doc["category"] == "gifts"
+    assert new_doc["creationDate"] is not None
 
 def test_update_document():
     updated_note = {
         "id": "10001",
+        "creationDate": "2021-11-06T14:22:31.000Z",
         "title": "Call dentist Samir",
         "description": "Number 555-123-1230, get appointment asap",
         "completed": False,

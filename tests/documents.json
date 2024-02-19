@@ -1,6 +1,7 @@
 [
     {
         "id": "10001",
+        "creationDate": "2021-11-06T14:22:31.000Z",
         "title": "Call the dentist",
         "description": "Number 555-123-1230, get appointment asap",
         "completed": false,
@@ -11,6 +12,7 @@
     },
     {
         "id": "10002",
+        "creationDate": "2021-11-03T09:10:00.000Z",
         "title": "Book a table to lunch with papa",
         "description": "At Casero's pizza",
         "completed": false,
@@ -21,6 +23,7 @@
     },
     {
         "id": "10003",
+        "creationDate": "2021-11-14T20:00:00.000Z",
         "title": "Buy cat food",
         "description": "",
         "completed": true,
@@ -28,5 +31,27 @@
         "remainders": [],
         "tags": ["pets", "groceries"],
         "category": "pets"
+    },
+    {
+        "id": "10004",
+        "creationDate": "2021-11-17T15:00:00.000Z",
+        "title": "Hit the gym",
+        "description": "",
+        "completed": false,
+        "dueDate": null,
+        "remainders": ["2021-11-17T20:00:00.000Z"],
+        "tags": ["gym"],
+        "category": "health"
+    },
+    {
+        "id": "10005",
+        "creationDate": "2021-11-17T18:00:00.000Z",
+        "title": "Buy dinner for two",
+        "description": "Stir fry",
+        "completed": false,
+        "dueDate": null,
+        "remainders": [],
+        "tags": ["groceries", "take-out dinner"],
+        "category": "self"
     }
 ]

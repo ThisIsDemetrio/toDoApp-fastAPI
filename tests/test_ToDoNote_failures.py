@@ -32,6 +32,7 @@ def test_fail_to_get_document_by_id():
 def test_fail_to_patch_document():
     updated_note = {
         "id": "notadocument",
+        "creationDate": "2021-11-08T14:27:51.000Z",
         "title": "Call dentist Samir",
         "description": "Number 555-123-1230, get appointment asap",
         "completed": False,
