@@ -7,8 +7,7 @@ from models.ToDoNote import ToDoNoteModel
 from config.get_context import Context
 from utils import generate_uuid
 
-router = APIRouter(prefix="/note")
-
+router = APIRouter(prefix="/note", tags=['Notes'])
 
 @router.get("/", response_model=Union[List[ToDoNoteModel], dict])
 async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[str] = None):

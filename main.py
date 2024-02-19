@@ -9,14 +9,14 @@ ctx = get_context()
 app = FastAPI(debug=ctx.get("settings").debug, title='ToDo App')
 ctx.get("logger").debug(f'FastAPI Debug mode: {ctx.get("settings").debug}')
 
-@app.get("/health")
+@app.get("/health", tags=['Health'])
 def health(ctx: Context):
     logger = ctx.get('logger')
     
     logger.debug('Health check requested.')
     return {"status": "OK"}
 
-@app.get("/db-health")
+@app.get("/db-health", tags=['Health'])
 async def db_health(ctx: Context):
     logger: Settings = ctx.get('logger')
     client: Client = ctx.get('client')
