@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.Client import Client
 from app.Settings import Settings
 from app.get_context import Context, get_context
-from api import Todo
+from api import todo
 
 ctx = get_context()
 
@@ -26,4 +26,4 @@ async def db_health(ctx: Context):
 
     return {"status": "OK", "existingConfigs": documents_in_config_coll}
 
-app.include_router(Todo.router)
+app.include_router(todo.router)

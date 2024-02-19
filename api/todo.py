@@ -49,7 +49,7 @@ async def create(ctx: Context, item: ToDoModel):
         logger.error(f'POST /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.post("/{id}", response_model=dict)
+@router.put("/{id}", response_model=dict)
 async def update(ctx: Context, id: str, todo_to_update: ToDoModel):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -57,7 +57,7 @@ async def update(ctx: Context, id: str, todo_to_update: ToDoModel):
     try:
         return await update_todo(client, id, todo_to_update)
     except Exception as e:
-        logger.error(f'POST /<id> returned error: {e}')
+        logger.error(f'PUT /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.patch("/setToCompleted/{id}", response_model=dict)

@@ -1,3 +1,4 @@
+from app import error_handling
 from app.Client import Client
 from app.Logger import Logger
 import os
@@ -32,3 +33,11 @@ def clear_todo_collection(database_name = TEST_DATABASE_NAME):
 def get_todo_document_by_id(document_id, database_name = TEST_DATABASE_NAME):
     client: Client = Client(TEST_MONGODB_URL, database_name)
     return client.get_todo_collection().find_one({"id": document_id})
+
+def assert_ko(error_code, res):
+    if error_code not in error_handling.error_codes:
+        raise Exception(f'Error code {error_code} does not exist. Verify your test.')
+    
+    assert res.status_code == 200
+    assert res.json()["status"] == "KO"
+    assert res.json()["code"] == error_code
