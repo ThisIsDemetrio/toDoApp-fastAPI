@@ -1,6 +1,6 @@
 # toDoApp-fastAPI
 
-Backend written with FastAPI and Python for a To Do app.
+This API is written with FastAPI and Python for a ToDo app.
 
 ## Prerequisites
 
@@ -11,7 +11,7 @@ If it is the first time you start the application on your machine, remember to s
 python3.exe -m venv venv
 ```
 
-Then activating with the following for Windows:
+Then activate with the following for Windows:
 ```
 venv\Scripts\activate
 ```
@@ -27,12 +27,12 @@ pip install -r requirements.txt
 
 ### Environment variables
 
-Environment variables included in the `.env` file will be used inside the application. This file is excluded from source control, so you want to create it at root folder (at the same level of `main.py`), with the same structure of `default.env`.
+Environment variables included in the `.env` file will be used inside the application. This file is excluded from source control, so you want to create it in the root folder (at the same level as `main.py`), with the same structure as `default.env`.
 
-You can also locally use a `local.env` file, as an alternative of `.env`. It is also excluded from git.
+You can also locally use a `local.env` file, as an alternative to `.env`. It is also excluded from git.
 
-The list of necessary environment variables are the following:
-* **DEBUG**: whether if FastAPI should start in debug mode or not
+The list of necessary environment variables is the following:
+* **DEBUG**: whether FastAPI should start in debug mode or not
   * default: _false_
 * **LOG_LEVEL**: from which level log will be printed out
   * default: _INFO_
@@ -45,11 +45,11 @@ You can start the application with the following:
 uvicorn main:app --reload
 ```
 
-It will be exposed in `http://localhost:8000`
+It will be exposed at `http://localhost:8000``
 
 # How to test
 
-Every test should be included inside the `tests` folder. We use `Pytest` to run tests. Simply launch
+Every test should be included in the `tests`` folder. We use `Pytest` to run tests. Simply launch
 ```
 pytest
 ```
