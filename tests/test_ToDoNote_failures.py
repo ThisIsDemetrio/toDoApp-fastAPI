@@ -50,7 +50,7 @@ def test_fail_to_patch_document():
         "category": "health"
     }
 
-    res = client.patch("/note/notadocument", json=updated_note)
+    res = client.post("/note/notadocument", json=updated_note)
     assert res.status_code == 200
     assert res.json()["status"] == "KO"
     assert res.json()["code"] == "A01"

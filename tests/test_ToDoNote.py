@@ -84,7 +84,7 @@ def test_update_document():
         "category": "health"
     }
 
-    patch_response = client.patch("/note/10001", json=updated_note)
+    patch_response = client.post("/note/10001", json=updated_note)
 
     assert patch_response.status_code == 200
     assert patch_response.json()["status"] == "OK"
