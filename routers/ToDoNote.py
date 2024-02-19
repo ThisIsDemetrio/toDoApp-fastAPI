@@ -1,18 +1,17 @@
 from datetime import datetime
 from typing import List, Optional, Union
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter,HTTPException
 from application.utils import is_valid_iso_date
 from config import error_handling
 from models.ToDoNote import ToDoNoteModel
-from typing_extensions import Annotated
-from config.get_context import get_context
+from config.get_context import Context
 from utils import generate_uuid
 
 router = APIRouter(prefix="/note")
 
 
 @router.get("/", response_model=Union[List[ToDoNoteModel], dict])
-async def get_all(ctx: Annotated[dict, Depends(get_context)], before: Optional[str] = None, after: Optional[str] = None):
+async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[str] = None):
     logger = ctx.get('logger')
     query = {}
     
@@ -35,7 +34,7 @@ async def get_all(ctx: Annotated[dict, Depends(get_context)], before: Optional[s
 
 
 @router.get("/{id}", response_model=Union[ToDoNoteModel, dict])
-async def get_by_id(id: str, ctx: Annotated[dict, Depends(get_context)]):
+async def get_by_id(ctx: Context, id: str):
     '''
     Returns the note with a specific "id" passed in query string.
     Returns a 404 exception if the document is not found.
@@ -53,7 +52,7 @@ async def get_by_id(id: str, ctx: Annotated[dict, Depends(get_context)]):
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
 @router.post("/", response_model=dict)
-async def create(item: ToDoNoteModel, ctx: Annotated[dict, Depends(get_context)]):
+async def create(ctx: Context, item: ToDoNoteModel):
     '''
     Create a new note.
     '''
@@ -70,7 +69,7 @@ async def create(item: ToDoNoteModel, ctx: Annotated[dict, Depends(get_context)]
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.patch("/{id}", response_model=dict)
-async def update(id: str, note_to_update: ToDoNoteModel, ctx: Annotated[dict, Depends(get_context)]):
+async def update(ctx: Context, id: str, note_to_update: ToDoNoteModel):
     '''
     Update the note with the "id" included in the request.
     Returns a 404 Exception if the document does not exist.
@@ -89,7 +88,7 @@ async def update(id: str, note_to_update: ToDoNoteModel, ctx: Annotated[dict, De
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.patch("/setToCompleted/{id}", response_model=dict)
-async def setToCompleted(id: str, ctx: Annotated[dict, Depends(get_context)]):
+async def setToCompleted(ctx: Context, id: str):
     '''
     Set the "completed" flag on a note to "True"
     '''
@@ -108,7 +107,7 @@ async def setToCompleted(id: str, ctx: Annotated[dict, Depends(get_context)]):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.patch("/setToNotCompleted/{id}", response_model=dict)
-async def setToNotCompleted(id: str, ctx: Annotated[dict, Depends(get_context)]):
+async def setToNotCompleted(ctx: Context, id: str):
     '''
     Set the "completed" flag on a note to "False"
     '''
@@ -127,7 +126,7 @@ async def setToNotCompleted(id: str, ctx: Annotated[dict, Depends(get_context)])
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
 @router.delete("/{id}", response_model=dict)
-async def delete(id: str, ctx: Annotated[dict, Depends(get_context)]):
+async def delete(ctx: Context, id: str):
     '''
     Handle the deletion of a note
     '''

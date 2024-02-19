@@ -1,8 +1,7 @@
-from fastapi import Depends, FastAPI
-from typing_extensions import Annotated
+from fastapi import FastAPI
 from config.Client import Client
 from config.Settings import Settings
-from config.get_context import get_context
+from config.get_context import Context, get_context
 from routers import ToDoNote
 
 ctx = get_context()
@@ -11,14 +10,14 @@ app = FastAPI(debug=ctx.get("settings").debug, title='ToDo App')
 ctx.get("logger").debug(f'FastAPI Debug mode: {ctx.get("settings").debug}')
 
 @app.get("/health")
-def health(ctx: Annotated[dict, Depends(get_context)]):
+def health(ctx: Context):
     logger = ctx.get('logger')
     
     logger.debug('Health check requested.')
     return {"status": "OK"}
 
 @app.get("/db-health")
-async def db_health(ctx: Annotated[dict, Depends(get_context)]):
+async def db_health(ctx: Context):
     logger: Settings = ctx.get('logger')
     client: Client = ctx.get('client')
 

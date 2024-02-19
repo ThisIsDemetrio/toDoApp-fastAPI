@@ -1,3 +1,5 @@
+from typing_extensions import Annotated
+from fastapi import Depends
 from config.Settings import Settings
 from config.Logger import Logger
 from config.Client import Client 
@@ -17,3 +19,5 @@ def get_context():
         "client": client,
         "logger": logger
     }
+
+Context = Annotated[dict, Depends(get_context)]
