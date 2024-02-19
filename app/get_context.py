@@ -1,8 +1,8 @@
 from typing_extensions import Annotated
 from fastapi import Depends
-from config.Settings import Settings
-from config.Logger import Logger
-from config.Client import Client 
+from app.Settings import Settings
+from app.Logger import Logger
+from app.Client import Client 
 
 # TODO: Evaluate if to create different context for different router modules (to return the collection instead than the whole client)
 # TODO: Create model or class

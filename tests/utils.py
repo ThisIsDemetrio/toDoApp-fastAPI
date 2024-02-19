@@ -1,5 +1,5 @@
-from config.Client import Client
-from config.Logger import Logger
+from app.Client import Client
+from app.Logger import Logger
 import os
 import json
 

@@ -1,7 +1,7 @@
 from logging.config import dictConfig
 import logging
 
-from utils import APP_NAME, LOG_LEVELS_DICT
+from app.utils import APP_NAME, LOG_LEVELS_DICT
 
 class Logger():
     def __init__(self, log_level='INFO'):

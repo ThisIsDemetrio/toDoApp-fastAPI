@@ -1,4 +1,4 @@
-from config.get_context import get_context
+from app.get_context import get_context
 import pytest
 from fastapi.testclient import TestClient
 

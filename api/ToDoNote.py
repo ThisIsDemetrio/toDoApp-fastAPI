@@ -1,11 +1,11 @@
 from datetime import datetime
 from typing import List, Optional, Union
 from fastapi import APIRouter,HTTPException
-from application.utils import is_valid_iso_date
-from config import error_handling
+from utils.is_valid_iso_date import is_valid_iso_date
+from app import error_handling
 from models.ToDoNote import ToDoNoteModel
-from config.get_context import Context
-from utils import generate_uuid
+from app.get_context import Context
+from utils.generate_uuid import generate_uuid
 
 router = APIRouter(prefix="/note", tags=['Notes'])
 

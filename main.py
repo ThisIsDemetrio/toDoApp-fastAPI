@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from config.Client import Client
-from config.Settings import Settings
-from config.get_context import Context, get_context
-from routers import ToDoNote
+from app.Client import Client
+from app.Settings import Settings
+from app.get_context import Context, get_context
+from api import ToDoNote
 
 ctx = get_context()
 

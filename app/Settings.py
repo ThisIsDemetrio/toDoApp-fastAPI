@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from utils import DATABASE_NAME
+
+from app.utils import DATABASE_NAME
 
 class Settings(BaseSettings):
     debug: bool = True
