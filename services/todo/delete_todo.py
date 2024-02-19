@@ -4,7 +4,7 @@ from app.Client import Client
 
 async def delete_todo(client: Client, id: str):
     '''
-    Handle the deletion of a note
+    Handle the deletion of a "todo" document
     '''
     collection = client.get_todo_collection()
 

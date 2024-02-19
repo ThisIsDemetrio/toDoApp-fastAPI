@@ -5,7 +5,7 @@ from utils.is_valid_iso_date import is_valid_iso_date
 
 async def update_remainder_to_todo(client: Client, id: str, old_remainder: str, new_remainder: str):
     '''
-    Change a remainder, replacing an existing one with a new one, to an existing note
+    Change a remainder, replacing an existing one with a new one, to an existing "todo" document
     '''
     if not is_valid_iso_date(old_remainder):
         return error_handling.return_error(error_handling.A02, key="new_remainder")

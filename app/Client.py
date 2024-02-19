@@ -9,7 +9,6 @@ class Client:
         """Returns the "config" collection"""
         return self.client[self.database_name].get_collection('config')
     
-    # TODO: Change name to "note" or "toDoNote"?
     def get_todo_collection(self):
         """Returns the "todo" collection"""
         return self.client[self.database_name].get_collection('todo')

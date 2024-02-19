@@ -1,11 +1,11 @@
 from datetime import datetime
 from app.Client import Client
-from models.ToDoNote import ToDoNoteModel
+from models.Todo import ToDoModel
 from utils.generate_uuid import generate_uuid
 
-async def create_todo(client: Client, item: ToDoNoteModel):
+async def create_todo(client: Client, item: ToDoModel):
     '''
-    Create a new note.
+    Create a new "todo" document.
     '''
     collection = client.get_todo_collection()
 

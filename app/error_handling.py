@@ -8,8 +8,8 @@ U00 = "U00"
 error_codes: dict = {
     "A01": "idNotFound",
     "A02": "dateNotValid",
-    "C01": "noteAlreadyCompleted",
-    "C02": "noteNotCompletedYet",
+    "C01": "todoAlreadyCompleted",
+    "C02": "todoNotCompletedYet",
     "C03": "remainderNotFound",
     "U00": "unhandledException"
 }

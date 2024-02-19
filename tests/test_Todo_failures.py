@@ -10,9 +10,9 @@ app.dependency_overrides[get_context] = get_context_for_tests
 
 @pytest.fixture(autouse=True)
 def setup_on_each_test():
-    # Before: we get the list of mock note documents to include in the "todo" collection
-    toDoNotes = open_mock_file()
-    insert_documents_in_todo_collection(toDoNotes)
+    # Before: we get the list of mock "todo" documents to include in the "todo" collection
+    todos = open_mock_file()
+    insert_documents_in_todo_collection(todos)
     
     # During: we execute tests
     yield
@@ -21,7 +21,7 @@ def setup_on_each_test():
     clear_todo_collection()
 
 def test_fail_to_get_document_by_id():
-    res = client.get("/note/notadocument")
+    res = client.get("/todo/notadocument")
 
     assert res.status_code == 200
     assert res.json()["status"] == "KO"
@@ -34,11 +34,11 @@ def test_fail_for_get_all_with_invalid_dates():
         assert res.json()["status"] == "KO"
         assert res.json()["code"] == "A02"
 
-    assert_ko(client.get("/note?before=2021-11-T16:0:00.000Z"))
-    assert_ko(client.get("/note?before=2021-11-03T16:00:00.000Z&after=202111-T16:00:00.000Z"))
+    assert_ko(client.get("/todo?before=2021-11-T16:0:00.000Z"))
+    assert_ko(client.get("/todo?before=2021-11-03T16:00:00.000Z&after=202111-T16:00:00.000Z"))
 
 def test_fail_to_patch_document():
-    updated_note = {
+    updated_todo = {
         "id": "notadocument",
         "creationDate": "2021-11-08T14:27:51.000Z",
         "title": "Call dentist Samir",
@@ -50,14 +50,14 @@ def test_fail_to_patch_document():
         "category": "health"
     }
 
-    res = client.post("/note/notadocument", json=updated_note)
+    res = client.post("/todo/notadocument", json=updated_todo)
     assert res.status_code == 200
     assert res.json()["status"] == "KO"
     assert res.json()["code"] == "A01"
     assert res.json()["id"] == "notadocument"
 
 def test_fail_to_set_to_complete_if_already_completed():
-    res = client.patch("/note/setToCompleted/10003")
+    res = client.patch("/todo/setToCompleted/10003")
 
     assert res.status_code == 200
     assert res.json()["status"] == "KO"
@@ -67,7 +67,7 @@ def test_fail_to_set_to_complete_if_already_completed():
     assert updated_doc["completed"] is True
 
 def test_fail_set_to_not_complete_if_not_completed_yet():
-    res = client.patch("/note/setToNotCompleted/10002")
+    res = client.patch("/todo/setToNotCompleted/10002")
 
     assert res.status_code == 200
     assert res.json()["status"] == "KO"
@@ -82,16 +82,16 @@ def test_fail_for_invalid_dates_in_remainder_methods():
         assert res.json()["status"] == "KO"
         assert res.json()["code"] == "A02"
 
-    assert_ko(client.patch("/note/addRemainder/10002?new=2021-11-T16:0:00.000Z"))
-    assert_ko(client.patch("/note/deleteRemainder/10002?old=202111-T16:00:00.000Z"))
-    assert_ko(client.patch("/note/updateRemainder/10002?old=2021-11-17T:30:00.000Z&new=2021-11-17T20:45:00.000Z"))
-    assert_ko(client.patch("/note/updateRemainder/10002?old=2021-11-17T20:30:00.000Z&new=202-117T20:45:00.000Z"))
+    assert_ko(client.patch("/todo/addRemainder/10002?new=2021-11-T16:0:00.000Z"))
+    assert_ko(client.patch("/todo/deleteRemainder/10002?old=202111-T16:00:00.000Z"))
+    assert_ko(client.patch("/todo/updateRemainder/10002?old=2021-11-17T:30:00.000Z&new=2021-11-17T20:45:00.000Z"))
+    assert_ko(client.patch("/todo/updateRemainder/10002?old=2021-11-17T20:30:00.000Z&new=202-117T20:45:00.000Z"))
 
 def test_fail_to_remove_non_existing_remainder():
     updated_doc = get_todo_document_by_id("10002")
     num_of_remainders = len(updated_doc["remainders"])
 
-    add_remainder = client.patch("/note/deleteRemainder/10002?old=2021-11-13T16:00:00.000Z")
+    add_remainder = client.patch("/todo/deleteRemainder/10002?old=2021-11-13T16:00:00.000Z")
 
     assert add_remainder.status_code == 200
     assert add_remainder.json()["status"] == "KO"
@@ -101,7 +101,7 @@ def test_fail_to_remove_non_existing_remainder():
     assert num_of_remainders == len(updated_doc["remainders"])
 
 def test_fail_to_delete_non_existing_document():
-    res = client.delete("/note/notadocument")
+    res = client.delete("/todo/notadocument")
 
     assert res.status_code == 200
     assert res.json()["status"] == "KO"

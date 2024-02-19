@@ -1,9 +1,8 @@
-from datetime import datetime
 from pydantic import BaseModel
 from typing import List, Union
 
-class ToDoNoteModel(BaseModel):
-    """Base model of a note"""
+class ToDoModel(BaseModel):
+    """Base model of a \"todo\""""
     id: str
     creationDate: Union[None, str] = ""
     title: str

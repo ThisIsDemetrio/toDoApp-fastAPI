@@ -10,8 +10,8 @@ app.dependency_overrides[get_context] = get_context_for_tests
 
 @pytest.fixture(autouse=True)
 def setup_on_each_test():
-    toDoNotes = open_mock_file()
-    insert_documents_in_todo_collection(toDoNotes)
+    todos = open_mock_file()
+    insert_documents_in_todo_collection(todos)
     
     yield
 
@@ -19,7 +19,7 @@ def setup_on_each_test():
     clear_todo_collection()
 
 def test_get_document_by_id():
-    response = client.get("/note/10001")
+    response = client.get("/todo/10001")
 
     assert response.status_code == 200
     assert response.json()["id"] == "10001"
@@ -27,25 +27,25 @@ def test_get_document_by_id():
     assert response.json()["category"] == "health"
 
 def test_get_all():
-    response = client.get("/note")
+    response = client.get("/todo")
 
     assert response.status_code == 200
     assert len(response.json()) == 5
 
-    response = client.get("/note?after=2021-11-17T00:00:00.000Z")
+    response = client.get("/todo?after=2021-11-17T00:00:00.000Z")
     assert response.status_code == 200
     assert len(response.json()) == 2
 
-    response = client.get("/note?after=2021-11-06T00:00:00.000Z&before=2021-11-17T23:59:59.999Z")
+    response = client.get("/todo?after=2021-11-06T00:00:00.000Z&before=2021-11-17T23:59:59.999Z")
     assert response.status_code == 200
     assert len(response.json()) == 4
 
-    response = client.get("/note?after=1991-01-01T00:00:00.000Z&before=1991-12-31T23:59:59.999Z")
+    response = client.get("/todo?after=1991-01-01T00:00:00.000Z&before=1991-12-31T23:59:59.999Z")
     assert response.status_code == 200
     assert len(response.json()) == 0
 
 def test_add_document():
-    note = {
+    todo = {
         "id": "",
         "title": "Buy flowers",
         "description": "Roses or lilies",
@@ -56,23 +56,23 @@ def test_add_document():
         "category": "gifts"
     }
 
-    post_response = client.post("/note/", json=note)
+    post_response = client.post("/todo/", json=todo)
 
     assert post_response.status_code == 200
     assert post_response.json()["status"] == "OK"
-    note_id = post_response.json()["id"]
-    assert note_id is not None
+    doc_id = post_response.json()["id"]
+    assert doc_id is not None
 
 
-    new_doc = get_todo_document_by_id(note_id)
+    new_doc = get_todo_document_by_id(doc_id)
     assert new_doc is not None
-    assert new_doc["id"] == note_id
+    assert new_doc["id"] == doc_id
     assert new_doc["title"] == "Buy flowers"
     assert new_doc["category"] == "gifts"
     assert new_doc["creationDate"] is not None
 
 def test_update_document():
-    updated_note = {
+    updated_todo = {
         "id": "10001",
         "creationDate": "2021-11-06T14:22:31.000Z",
         "title": "Call dentist Samir",
@@ -84,7 +84,7 @@ def test_update_document():
         "category": "health"
     }
 
-    patch_response = client.post("/note/10001", json=updated_note)
+    patch_response = client.post("/todo/10001", json=updated_todo)
 
     assert patch_response.status_code == 200
     assert patch_response.json()["status"] == "OK"
@@ -96,7 +96,7 @@ def test_update_document():
     assert updated_doc["category"] == "health"
 
 def test_set_to_complete():
-    set_to_true_response = client.patch("/note/setToCompleted/10002")
+    set_to_true_response = client.patch("/todo/setToCompleted/10002")
 
     assert set_to_true_response.status_code == 200
     assert set_to_true_response.json()["status"] == "OK"
@@ -105,7 +105,7 @@ def test_set_to_complete():
     assert updated_doc["completed"] is True
 
 def test_set_to_not_complete():
-    set_to_not_complete = client.patch("/note/setToNotCompleted/10003")
+    set_to_not_complete = client.patch("/todo/setToNotCompleted/10003")
 
     assert set_to_not_complete.status_code == 200
     assert set_to_not_complete.json()["status"] == "OK"
@@ -114,7 +114,7 @@ def test_set_to_not_complete():
     assert updated_doc["completed"] is False
 
 def test_add_remainder():
-    add_remainder = client.patch("/note/addRemainder/10001?new=2021-11-09T13:45:00.000Z")
+    add_remainder = client.patch("/todo/addRemainder/10001?new=2021-11-09T13:45:00.000Z")
 
     assert add_remainder.status_code == 200
     assert add_remainder.json()["status"] == "OK"
@@ -124,7 +124,7 @@ def test_add_remainder():
 
 
 def test_remove_remainder():
-    add_remainder = client.patch("/note/deleteRemainder/10002?old=2021-11-08T16:00:00.000Z")
+    add_remainder = client.patch("/todo/deleteRemainder/10002?old=2021-11-08T16:00:00.000Z")
 
     assert add_remainder.status_code == 200
     assert add_remainder.json()["status"] == "OK"
@@ -133,7 +133,7 @@ def test_remove_remainder():
     assert updated_doc["remainders"] == []
 
 def test_replace_remainder():
-    add_remainder = client.patch("/note/updateRemainder/10004?old=2021-11-17T20:30:00.000Z&new=2021-11-17T20:45:00.000Z")
+    add_remainder = client.patch("/todo/updateRemainder/10004?old=2021-11-17T20:30:00.000Z&new=2021-11-17T20:45:00.000Z")
 
     assert add_remainder.status_code == 200
     assert add_remainder.json()["status"] == "OK"
@@ -142,7 +142,7 @@ def test_replace_remainder():
     assert updated_doc["remainders"] == ["2021-11-17T20:00:00.000Z", "2021-11-17T20:45:00.000Z"]
 
 def test_delete_document():
-    delete_response = client.delete("/note/10001")
+    delete_response = client.delete("/todo/10001")
 
     assert delete_response.status_code == 200
     assert delete_response.json()["status"] == "OK"

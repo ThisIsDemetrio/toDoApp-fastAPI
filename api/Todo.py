@@ -10,12 +10,12 @@ from services.todo.set_todo_to_completed import set_todo_to_completed
 from services.todo.set_todo_to_not_completed import set_todo_to_not_completed
 from services.todo.update_remainder_to_todo import update_remainder_to_todo
 from services.todo.update_todo import update_todo
-from models.ToDoNote import ToDoNoteModel
+from models.Todo import ToDoModel
 from app.get_context import Context
 
-router = APIRouter(prefix="/note", tags=['Notes'])
+router = APIRouter(prefix="/todo", tags=['To Do notes'])
 
-@router.get("/", response_model=Union[List[ToDoNoteModel], dict])
+@router.get("/", response_model=Union[List[ToDoModel], dict])
 async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[str] = None):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -27,7 +27,7 @@ async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[st
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.get("/{id}", response_model=Union[ToDoNoteModel, dict])
+@router.get("/{id}", response_model=Union[ToDoModel, dict])
 async def get_by_id(ctx: Context, id: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -39,7 +39,7 @@ async def get_by_id(ctx: Context, id: str):
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
 @router.post("/", response_model=dict)
-async def create(ctx: Context, item: ToDoNoteModel):
+async def create(ctx: Context, item: ToDoModel):
     logger = ctx.get('logger')
     client = ctx.get('client')
 
@@ -50,12 +50,12 @@ async def create(ctx: Context, item: ToDoNoteModel):
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 @router.post("/{id}", response_model=dict)
-async def update(ctx: Context, id: str, note_to_update: ToDoNoteModel):
+async def update(ctx: Context, id: str, todo_to_update: ToDoModel):
     logger = ctx.get('logger')
     client = ctx.get('client')
 
     try:
-        return await update_todo(client, id, note_to_update)
+        return await update_todo(client, id, todo_to_update)
     except Exception as e:
         logger.error(f'POST /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")

@@ -5,7 +5,7 @@ from utils.is_valid_iso_date import is_valid_iso_date
 
 async def delete_remainder_to_todo(client: Client, id: str, remainder: str):
     '''
-    Remove an existing remainder to an existing note
+    Remove an existing remainder to an existing "todo" document
     '''
     if not is_valid_iso_date(remainder):
         return error_handling.return_error(error_handling.A02, key="payload")

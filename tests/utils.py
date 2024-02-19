@@ -3,9 +3,9 @@ from app.Logger import Logger
 import os
 import json
 
-NOTE_MOCKS_RELATIVE_PATH = 'tests/documents.json'
 TEST_MONGODB_URL = "mongodb://localhost:27017"
 TEST_DATABASE_NAME = "toDoApp-tests"
+TODO_MOCKS_RELATIVE_PATH = 'tests/documents.json'
 
 def get_context_for_tests():
     """Create a context to be passed to the application. Please note this is intended for unit tests."""
@@ -14,7 +14,7 @@ def get_context_for_tests():
 
     return {"client": client, "logger": logger}
 
-def open_mock_file(file_name = NOTE_MOCKS_RELATIVE_PATH):
+def open_mock_file(file_name = TODO_MOCKS_RELATIVE_PATH):
     file_path = os.path.join(os.getcwd(), file_name)
     with open(file_path, 'r') as json_file:
         file_content = json.load(json_file)
