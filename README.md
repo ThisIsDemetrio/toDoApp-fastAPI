@@ -4,6 +4,8 @@ This API is written with FastAPI and Python for a ToDo app.
 
 ## Prerequisites
 
+Before to start, please note this app is built with Python 3.10 in mind. Please mind that using previous version might create issues on your development experience.
+
 ### Install the virtual environment
 
 If it is the first time you start the application on your machine, remember to set up a virtual machine:
@@ -38,6 +40,7 @@ The list of necessary environment variables is the following:
   * default: _INFO_
   * possible values: _NOTSET_, _DEBUG_, _INFO_, _WARNING_, _ERROR_, _CRITICAL_
 * **MONGO_URL** (_mandatory_): the path of the Mongo database to connect with, containing host and port;
+
 ## How to run
 
 You can start the application with the following:
@@ -49,7 +52,7 @@ It will be exposed at `http://localhost:8000``
 
 # How to test
 
-Every test should be included in the `tests`` folder. We use `Pytest` to run tests. Simply launch
+Every test should be included in the `tests` folder. We use `Pytest` to run tests. Simply launch
 ```
 pytest
 ```

@@ -1,4 +1,4 @@
-from typing_extensions import Annotated
+from typing import Annotated
 from fastapi import Depends
 from app.Settings import Settings
 from app.Logger import Logger
