@@ -3,17 +3,23 @@ from app.Client import Client
 from app.Logger import Logger
 import os
 import json
+from passlib.context import CryptContext
 
 TEST_MONGODB_URL = "mongodb://localhost:27017"
 TEST_DATABASE_NAME = "toDoApp-tests"
 TODO_MOCKS_RELATIVE_PATH = 'tests/documents.json'
 
 def get_context_for_tests():
-    """Create a context to be passed to the application. Please note this is intended for unit tests."""
+    """Create a context to be passed to the application. Please note this is intended for unit tests only."""
     logger: Logger = Logger('NOTSET').get_logger()
     client: Client = Client(TEST_MONGODB_URL, TEST_DATABASE_NAME)
+    pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    return {"client": client, "logger": logger}
+    return {
+        "client": client, 
+        "logger": logger,
+        "pwd_context": pwd_context
+    }
 
 def open_mock_file(file_name = TODO_MOCKS_RELATIVE_PATH):
     file_path = os.path.join(os.getcwd(), file_name)

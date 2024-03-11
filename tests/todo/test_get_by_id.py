@@ -4,7 +4,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from main import app
-from tests.utils import assert_ko, clear_todo_collection, get_context_for_tests, get_todo_document_by_id, insert_documents_in_todo_collection, open_mock_file
+from tests.utils import assert_ko, clear_todo_collection, get_context_for_tests, insert_documents_in_todo_collection, open_mock_file
 
 client = TestClient(app)
 app.dependency_overrides[get_context] = get_context_for_tests

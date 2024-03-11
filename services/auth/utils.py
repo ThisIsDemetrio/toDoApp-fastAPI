@@ -3,9 +3,10 @@ from typing import Annotated
 
 from fastapi import Depends, HTTPException, status
 from jose import jwt, JWTError
+from app.Client import Client
+from app.get_context import Context
 from models.Token import TokenData
 from models.User import User, UserInDB
-from tests.auth.utils import fake_users_db
 from app.auth import oauth2_scheme
 
 # TODO: I'm confident this has to get out from here, and stored as an environment variable
@@ -21,16 +22,21 @@ def verify_password(pwd_context, plain_password, hashed_password):
 def get_password_hash(pwd_context, password):
     return pwd_context.hash(password)
 
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
+def get_user(client: Client, username: str):
+    result = client.get_users_collection().find_one({'username': username})
+    if result is not None:
+        return UserInDB(**result)
 
-def authenticate_user(pwd_context, username: str, password: str, fake_db = fake_users_db):
-    user = get_user(fake_db, username)
+def authenticate_user(ctx: Context, username: str, password: str):
+    pwd_context = ctx.get('pwd_context')
+    client = ctx.get('client')
+    logger = ctx.get('logger')
+
+    user = get_user(client, username)
     if not user:
         return False
     if not verify_password(pwd_context, password, user.hashed_password):
+        logger.warning(f'Username {username} found on database but password is not valid')
         return False
     return user
 
@@ -44,22 +50,30 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+async def get_current_user(ctx: Context, token: Annotated[str, Depends(oauth2_scheme)]):
+    logger = ctx.get('logger')
+    client: Client = ctx.get('client')
+
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
         headers={"WWW-Authenticate": "Bearer"},
     )
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
         if username is None:
+            logger.warning(f'Unauthorized login for username {username}: username not found.')
             raise credentials_exception
         token_data = TokenData(username=username)
     except JWTError:
+        logger.warning(f'Unauthorized login for username {username}: JWT error.')
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    
+    user = get_user(client, username=token_data.username)
     if user is None:
+        logger.warning(f'Unauthorized login for username {username}: username not found.')
         raise credentials_exception
     return user
 
