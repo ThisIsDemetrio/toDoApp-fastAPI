@@ -78,6 +78,24 @@ async def get_current_user(ctx: Context, token: Annotated[str, Depends(oauth2_sc
     return user
 
 async def get_current_active_user(current_user: Annotated[User, Depends(get_current_user)]):
+    '''
+    Method that returns the current user, but that can be used as well to verify
+    if the user is valid and has a token.
+
+    Can be used as a dependency:
+    ```
+    router.get("/", response_model=..., dependencies=[Depends(get_current_active_user)])
+    async def get(...):
+    ```
+
+    or in the parameters (to actually use the user instance):
+    ```
+    @router.get("/")
+    async def get(current_user: Annotated[User, Depends(get_current_active_user)]):
+    ```
+    
+    according to your needs.
+    '''
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

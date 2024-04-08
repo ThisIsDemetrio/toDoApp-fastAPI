@@ -1,5 +1,6 @@
 from typing import List, Optional, Union
-from fastapi import APIRouter,HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from services.auth.utils import get_current_active_user
 from services.todo.add_remainder_to_todo import add_remainder_to_todo
 from services.todo.create_todo import create_todo
 from services.todo.delete_remainder_to_todo import delete_remainder_to_todo
@@ -15,7 +16,7 @@ from app.get_context import Context
 
 router = APIRouter(prefix="/todo", tags=['To Do notes'])
 
-@router.get("/", response_model=Union[List[ToDoModel], dict])
+@router.get("/", response_model=Union[List[ToDoModel], dict], dependencies=[Depends(get_current_active_user)])
 async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[str] = None):
     logger = ctx.get('logger')
     client = ctx.get('client')
