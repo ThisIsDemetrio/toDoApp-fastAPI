@@ -4,10 +4,12 @@ import pytest
 from fastapi.testclient import TestClient
 
 from main import app
-from tests.utils import assert_ko, clear_todo_collection, get_context_for_tests, insert_documents_in_todo_collection, open_mock_file
+from services.auth.utils import get_current_active_user
+from tests.utils import assert_ko, clear_todo_collection, get_context_for_tests, get_current_user_for_tests, insert_documents_in_todo_collection, open_mock_file
 
 client = TestClient(app)
 app.dependency_overrides[get_context] = get_context_for_tests
+app.dependency_overrides[get_current_active_user] = get_current_user_for_tests
 
 @pytest.fixture(autouse=True)
 def setup_on_each_test():
