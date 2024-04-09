@@ -9,21 +9,26 @@ Before to start, please note this app is built with Python 3.10 in mind. Please 
 ### Install the virtual environment
 
 If it is the first time you start the application on your machine, remember to set up a virtual machine:
-```
+
+```shell
 python3.exe -m venv venv
 ```
 
 Then activate with the following for Windows:
-```
+
+```shell
 venv\Scripts\activate
 ```
+
 or Linux:
-```
+
+```shell
 source venv/scripts/activate
 ```
 
 Then install dependencies:
-```
+
+```shell
 pip install -r requirements.txt
 ```
 
@@ -34,6 +39,7 @@ Environment variables included in the `.env` file will be used inside the applic
 You can also locally use a `local.env` file, as an alternative to `.env`. It is also excluded from git.
 
 The list of necessary environment variables is the following:
+
 * **DEBUG**: whether FastAPI should start in debug mode or not
   * default: _false_
 * **LOG_LEVEL**: from which level log will be printed out
@@ -44,7 +50,8 @@ The list of necessary environment variables is the following:
 ## How to run
 
 You can start the application with the following:
-```
+
+```shell
 uvicorn main:app --reload
 ```
 
@@ -53,7 +60,8 @@ It will be exposed at `http://localhost:8000``
 # How to test
 
 Every test should be included in the `tests` folder. We use `Pytest` to run tests. Simply launch
-```
+
+```shell
 pytest
 ```
 
