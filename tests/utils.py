@@ -21,6 +21,19 @@ def get_context_for_tests():
         "pwd_context": pwd_context
     }
 
+def get_current_user_for_tests():
+    """
+    Create an instance of the current user to be passed to the application.
+    
+    Please note this is intended for unit tests only.
+    """
+    return {
+        "username": "john",
+        "email": "john@example.com",
+        "disabled": False,
+        "hashed_password": "hashed_password"
+    }
+
 def open_mock_file(file_name = TODO_MOCKS_RELATIVE_PATH):
     file_path = os.path.join(os.getcwd(), file_name)
     with open(file_path, 'r') as json_file:

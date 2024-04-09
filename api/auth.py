@@ -35,22 +35,3 @@ async def login(ctx: Context, form_data: Annotated[OAuth2PasswordRequestForm, De
         data={"sub": user.username}, expires_delta=access_token_expires
     )
     return Token(access_token=access_token, token_type="bearer")
-
-# TODO: This must disappear
-@router.get("/auth/me")
-async def read_users_me(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-):
-    return current_user
-
-# TODO: This must disappear
-@router.get("/auth/me/items/")
-async def read_own_items(
-    current_user: Annotated[User, Depends(get_current_active_user)]
-):
-    return [{"item_id": "Foo", "owner": current_user.username}]
-
-# TODO: This must disappear
-@router.get("/auth/items")
-async def read_items(token: Annotated[str, Depends(oauth2_scheme)]):
-    return {"token": token}
