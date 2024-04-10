@@ -1,5 +1,4 @@
 import pytest
-from app import error_handling
 from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 from fastapi.testclient import TestClient

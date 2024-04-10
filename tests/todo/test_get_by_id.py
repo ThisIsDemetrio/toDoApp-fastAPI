@@ -1,4 +1,3 @@
-from app import error_handling
 from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 import pytest
@@ -31,9 +30,9 @@ def test_get_document_by_id():
     response = client.get("/todo/10001")
 
     assert response.status_code == 200
-    assert response.json()["id"] == "10001"
-    assert response.json()["title"] == "Call the dentist"
-    assert response.json()["category"] == "health"
+    assert response.json()["result"]["id"] == "10001"
+    assert response.json()["result"]["title"] == "Call the dentist"
+    assert response.json()["result"]["category"] == "health"
 
 def test_fail_to_get_document_by_id():
     res = client.get("/todo/notadocument")

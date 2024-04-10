@@ -25,7 +25,7 @@ def test_add_document():
 
     assert post_response.status_code == 200
     assert post_response.json()["status"] == "OK"
-    doc_id = post_response.json()["id"]
+    doc_id = post_response.json()["result"]
     assert doc_id is not None
 
 

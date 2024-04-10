@@ -1,4 +1,3 @@
-from app import error_handling
 from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 import pytest
@@ -31,19 +30,23 @@ def test_get_all():
     response = client.get("/todo")
 
     assert response.status_code == 200
-    assert len(response.json()) == 5
+    assert response.json()["status"] == "OK"
+    assert len(response.json()["result"]) == 5
 
     response = client.get("/todo?after=2021-11-17T00:00:00.000Z")
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert response.json()["status"] == "OK"
+    assert len(response.json()["result"]) == 2
 
     response = client.get("/todo?after=2021-11-06T00:00:00.000Z&before=2021-11-17T23:59:59.999Z")
     assert response.status_code == 200
-    assert len(response.json()) == 4
+    assert response.json()["status"] == "OK"
+    assert len(response.json()["result"]) == 4
 
     response = client.get("/todo?after=1991-01-01T00:00:00.000Z&before=1991-12-31T23:59:59.999Z")
     assert response.status_code == 200
-    assert len(response.json()) == 0
+    assert response.json()["status"] == "OK"
+    assert len(response.json()["result"]) == 0
 
 def test_fail_for_get_all_with_invalid_dates():
     assert_ko(ErrorCode.A02, client.get("/todo?before=2021-11-T16:0:00.000Z"))

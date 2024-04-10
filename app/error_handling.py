@@ -10,13 +10,17 @@ error_description_map: dict = {
     ErrorCode.Y00: "usernameAlreadyTaken",
 }
 
+class ErrorModel():
+    status = "KO",
+    code: str
+    message: str
+
 def return_error(error_code: ErrorCode, **kwargs):
     error_description = error_description_map.get(error_code, None)
     if (error_description is None):
         raise KeyError(error_code)
 
-    # TODO: This should be a model
-    result = {
+    result: ErrorModel = {
         "status": "KO",
         "code": error_code,
         "message": error_description

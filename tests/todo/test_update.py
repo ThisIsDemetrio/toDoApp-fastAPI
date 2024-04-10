@@ -1,5 +1,4 @@
 import pytest
-from app import error_handling
 from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 from fastapi.testclient import TestClient
@@ -44,7 +43,7 @@ def test_update_document():
 
     assert patch_response.status_code == 200
     assert patch_response.json()["status"] == "OK"
-    assert patch_response.json()["id"] == "10001"
+    assert patch_response.json()["result"] == "10001"
 
     updated_doc = get_todo_document_by_id("10001")
     assert updated_doc is not None

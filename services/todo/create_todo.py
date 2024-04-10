@@ -12,4 +12,4 @@ async def create_todo(client: Client, item: ToDoModel):
     item_id = generate_uuid()
     current_iso_date = datetime.now().date().isoformat()
     collection.insert_one({**item.model_dump(), "id": item_id, "creationDate": current_iso_date })
-    return {"status": "OK", "id": item_id}
+    return {"status": "OK", "result": item_id}

@@ -10,9 +10,6 @@ from services.auth.create_user_and_generate_token import create_user_and_generat
 from services.auth.login_and_generate_token import login_and_generate_token
 from services.auth.utils import generate_token
 
-# TODO: Add route to add users
-# TODO: Move logic to services
-
 # NOTE: I cannot use prefix because nested routes won't be found by oauth2_scheme. I guess I'll keep it that way 
 router = APIRouter(tags=['Authentication'])
 
