@@ -1,4 +1,5 @@
 from app import error_handling
+from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 import pytest
 from fastapi.testclient import TestClient
@@ -45,5 +46,5 @@ def test_get_all():
     assert len(response.json()) == 0
 
 def test_fail_for_get_all_with_invalid_dates():
-    assert_ko(error_handling.A02, client.get("/todo?before=2021-11-T16:0:00.000Z"))
-    assert_ko(error_handling.A02, client.get("/todo?before=2021-11-03T16:00:00.000Z&after=202111-T16:00:00.000Z"))
+    assert_ko(ErrorCode.A02, client.get("/todo?before=2021-11-T16:0:00.000Z"))
+    assert_ko(ErrorCode.A02, client.get("/todo?before=2021-11-03T16:00:00.000Z&after=202111-T16:00:00.000Z"))

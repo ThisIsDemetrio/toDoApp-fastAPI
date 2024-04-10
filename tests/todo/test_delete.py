@@ -1,4 +1,5 @@
 from app import error_handling
+from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 import pytest
 from fastapi.testclient import TestClient
@@ -33,5 +34,5 @@ def test_delete_document():
 def test_fail_to_delete_non_existing_document():
     res = client.delete("/todo/notadocument")
 
-    assert_ko(error_handling.A01, res)
+    assert_ko(ErrorCode.A01, res)
     assert res.json()["id"] == "notadocument"

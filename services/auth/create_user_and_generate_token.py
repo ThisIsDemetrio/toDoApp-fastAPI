@@ -1,5 +1,6 @@
 from app import error_handling
 from app.Client import Client
+from app.ErrorCode import ErrorCode
 from app.get_context import Context
 from models import Signup
 from passlib.context import CryptContext
@@ -16,7 +17,7 @@ def create_user_and_generate_token(ctx: Context, data: Signup) -> Token:
 
     user = get_user(client, data.username)
     if user:
-        return error_handling.return_error(error_handling.Y00)
+        return error_handling.return_error(ErrorCode.Y00)
 
     client.get_users_collection().insert_one({
         "username": data.username,

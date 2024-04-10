@@ -1,5 +1,6 @@
 import pytest
 from app import error_handling
+from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 from fastapi.testclient import TestClient
 
@@ -65,5 +66,5 @@ def test_fail_to_update_document():
 
     res = client.put("/todo/notadocument", json=updated_todo)
 
-    assert_ko(error_handling.A01, res)
+    assert_ko(ErrorCode.A01, res)
     assert res.json()["id"] == "notadocument"

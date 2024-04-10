@@ -60,7 +60,7 @@ def get_todo_document_by_id(document_id, database_name = TEST_DATABASE_NAME):
     return client.get_todo_collection().find_one({"id": document_id})
 
 def assert_ko(error_code, res):
-    if error_code not in error_handling.error_codes:
+    if error_code not in error_handling.error_description_map:
         raise Exception(f'Error code {error_code} does not exist. Verify your test.')
     
     assert res.status_code == 200

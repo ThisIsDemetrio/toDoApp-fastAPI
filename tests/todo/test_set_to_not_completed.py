@@ -1,5 +1,6 @@
 import pytest
 from app import error_handling
+from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 from fastapi.testclient import TestClient
 
@@ -38,7 +39,7 @@ def test_set_to_not_complete():
 def test_fail_set_to_not_complete_if_not_completed_yet():
     res = client.patch("/todo/setToNotCompleted/10002")
 
-    assert_ko(error_handling.C02, res)
+    assert_ko(ErrorCode.C02, res)
 
     updated_doc = get_todo_document_by_id("10002")
     assert updated_doc["completed"] is False

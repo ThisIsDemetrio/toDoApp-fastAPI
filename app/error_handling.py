@@ -1,25 +1,17 @@
-# TODO: error_codes should move on its own file
-A01 = "A01"
-A02 = "A02"
-C01 = "C01"
-C02 = "C02"
-C03 = "C03"
-U00 = "U00"
-Y00 = "Y00"
+from app.ErrorCode import ErrorCode
 
-# TODO: this should be called error map
-error_codes: dict = {
-    "A01": "idNotFound",
-    "A02": "dateNotValid",
-    "C01": "todoAlreadyCompleted",
-    "C02": "todoNotCompletedYet",
-    "C03": "remainderNotFound",
-    "U00": "unhandledException",
-    "Y00": "usernameAlreadyTaken",
+error_description_map: dict = {
+    ErrorCode.A01: "idNotFound",
+    ErrorCode.A02: "dateNotValid",
+    ErrorCode.C01: "todoAlreadyCompleted",
+    ErrorCode.C02: "todoNotCompletedYet",
+    ErrorCode.C03: "remainderNotFound",
+    ErrorCode.U00: "unhandledException",
+    ErrorCode.Y00: "usernameAlreadyTaken",
 }
 
-def return_error(error_code, **kwargs):
-    error_description = error_codes.get(error_code, None)
+def return_error(error_code: ErrorCode, **kwargs):
+    error_description = error_description_map.get(error_code, None)
     if (error_description is None):
         raise KeyError(error_code)
 

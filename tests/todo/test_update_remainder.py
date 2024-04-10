@@ -1,5 +1,6 @@
 import pytest
 from app import error_handling
+from app.ErrorCode import ErrorCode
 from app.get_context import get_context
 from fastapi.testclient import TestClient
 
@@ -36,5 +37,5 @@ def test_update_remainder():
     assert updated_doc["remainders"] == ["2021-11-17T20:00:00.000Z", "2021-11-17T20:45:00.000Z"]
 
 def test_fail_for_invalid_dates_in_remainder_methods():
-    assert_ko(error_handling.A02, client.patch("/todo/updateRemainder/10002?old=2021-11-17T:30:00.000Z&new=2021-11-17T20:45:00.000Z"))
-    assert_ko(error_handling.A02, client.patch("/todo/updateRemainder/10002?old=2021-11-17T20:30:00.000Z&new=202-117T20:45:00.000Z"))
+    assert_ko(ErrorCode.A02, client.patch("/todo/updateRemainder/10002?old=2021-11-17T:30:00.000Z&new=2021-11-17T20:45:00.000Z"))
+    assert_ko(ErrorCode.A02, client.patch("/todo/updateRemainder/10002?old=2021-11-17T20:30:00.000Z&new=202-117T20:45:00.000Z"))

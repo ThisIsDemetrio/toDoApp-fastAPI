@@ -1,5 +1,6 @@
 from app import error_handling
 from app.Client import Client
+from app.ErrorCode import ErrorCode
 from models.Todo import ToDoModel
 
 async def update_todo(client: Client, id: str, todo_to_update: ToDoModel):
@@ -13,4 +14,4 @@ async def update_todo(client: Client, id: str, todo_to_update: ToDoModel):
     if result.modified_count == 1:
         return {"status": "OK", "id": id}
     else:
-        return error_handling.return_error(error_handling.A01, id=id)
+        return error_handling.return_error(ErrorCode.A01, id=id)

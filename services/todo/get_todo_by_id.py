@@ -1,6 +1,7 @@
 from fastapi import HTTPException
 from app import error_handling
 from app.Client import Client
+from app.ErrorCode import ErrorCode
 
 async def get_todo_by_id(client: Client, id: str):
     '''
@@ -12,4 +13,4 @@ async def get_todo_by_id(client: Client, id: str):
     if item:
         return item
     else:
-        return error_handling.return_error(error_handling.A01, id=id)
+        return error_handling.return_error(ErrorCode.A01, id=id)
