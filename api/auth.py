@@ -56,4 +56,4 @@ async def login(ctx: Context, form_data: Annotated[OAuth2PasswordRequestForm, De
         logger.error(f'POST /login returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-    return generate_token(form_data.username)
+    return generate_token(ctx, form_data.username)

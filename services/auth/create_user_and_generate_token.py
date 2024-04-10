@@ -28,5 +28,5 @@ def create_user_and_generate_token(ctx: Context, data: Signup) -> Token:
 
     return {
         "status": "OK",
-        "token": generate_token(data.username)
+        "token": generate_token(ctx, data.username)
     }

@@ -46,6 +46,8 @@ The list of necessary environment variables is the following:
   * default: _INFO_
   * possible values: _NOTSET_, _DEBUG_, _INFO_, _WARNING_, _ERROR_, _CRITICAL_
 * **MONGO_URL** (_mandatory_): the path of the Mongo database to connect with, containing host and port;
+* **DATABASE_NAME** (_mandatory_): the name of the MongoDB database;
+* **HASH_KEY** (_mandatory_): this is a 32 letter hash that will be used to hash passwords (e.g. via Linux, you can generate it typing `openssl rand -hex 32` on a terminal)
 
 ## How to run
 

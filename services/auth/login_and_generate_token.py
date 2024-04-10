@@ -16,4 +16,4 @@ def login_and_generate_token(ctx: Context, username: str, password: str) -> Toke
         logger.warning(f'Username {username} found on database but password is not valid')
         return None
     
-    return generate_token(username)
+    return generate_token(ctx, username)
