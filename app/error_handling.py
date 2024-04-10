@@ -4,6 +4,7 @@ C01 = "C01"
 C02 = "C02"
 C03 = "C03"
 U00 = "U00"
+Y00 = "Y00"
 
 error_codes: dict = {
     "A01": "idNotFound",
@@ -11,7 +12,8 @@ error_codes: dict = {
     "C01": "todoAlreadyCompleted",
     "C02": "todoNotCompletedYet",
     "C03": "remainderNotFound",
-    "U00": "unhandledException"
+    "U00": "unhandledException",
+    "Y00": "usernameAlreadyTaken"
 }
 
 def return_error(error_code, **kwargs):

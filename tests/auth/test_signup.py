@@ -23,12 +23,13 @@ def setup_on_each_test():
     # After: we clear the "todo" collection
     clear_users_collection()
 
-def test_login():
-    form_data = {
-        'username': 'john',
-        'password': 'secret'
+def test_signup():
+    signup_data = {
+        'username': 'luke',
+        'password': 'password',
+        'email': 'luke@mail.com'
     }
-    response = client.post('/login', data=form_data)
+    response = client.post('/signup', json=signup_data)
 
     assert response.status_code == 200
     assert response.json()['token_type'] == 'bearer'
