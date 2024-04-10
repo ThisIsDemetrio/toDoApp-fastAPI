@@ -3,17 +3,42 @@ from app.Client import Client
 from app.Logger import Logger
 import os
 import json
+from passlib.context import CryptContext
+
+from app.Settings import Settings
 
 TEST_MONGODB_URL = "mongodb://localhost:27017"
 TEST_DATABASE_NAME = "toDoApp-tests"
 TODO_MOCKS_RELATIVE_PATH = 'tests/documents.json'
 
 def get_context_for_tests():
-    """Create a context to be passed to the application. Please note this is intended for unit tests."""
+    """Create a context to be passed to the application. Please note this is intended for unit tests only."""
+    settings: Settings = Settings()
+    settings.hash_key = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+    
     logger: Logger = Logger('NOTSET').get_logger()
     client: Client = Client(TEST_MONGODB_URL, TEST_DATABASE_NAME)
+    pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
-    return {"client": client, "logger": logger}
+    return {
+        "settings": settings,
+        "client": client, 
+        "logger": logger,
+        "pwd_context": pwd_context
+    }
+
+def get_current_user_for_tests():
+    """
+    Create an instance of the current user to be passed to the application.
+    
+    Please note this is intended for unit tests only.
+    """
+    return {
+        "username": "john",
+        "email": "john@example.com",
+        "disabled": False,
+        "hashed_password": "hashed_password"
+    }
 
 def open_mock_file(file_name = TODO_MOCKS_RELATIVE_PATH):
     file_path = os.path.join(os.getcwd(), file_name)

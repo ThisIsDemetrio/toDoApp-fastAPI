@@ -2,12 +2,13 @@ from fastapi import FastAPI
 from app.Client import Client
 from app.Settings import Settings
 from app.get_context import Context, get_context
-from api import todo
+from api import todo, auth
 
 ctx = get_context()
 
 app = FastAPI(debug=ctx.get("settings").debug, title='ToDo App')
 ctx.get("logger").debug(f'FastAPI Debug mode: {ctx.get("settings").debug}')
+
 
 @app.get("/health", tags=['Health'])
 def health(ctx: Context):
@@ -27,3 +28,4 @@ async def db_health(ctx: Context):
     return {"status": "OK", "existingConfigs": documents_in_config_coll}
 
 app.include_router(todo.router)
+app.include_router(auth.router)

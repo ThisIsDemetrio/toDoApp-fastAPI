@@ -1,5 +1,6 @@
 from typing import List, Optional, Union
-from fastapi import APIRouter,HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from services.auth.utils import get_current_active_user
 from services.todo.add_remainder_to_todo import add_remainder_to_todo
 from services.todo.create_todo import create_todo
 from services.todo.delete_remainder_to_todo import delete_remainder_to_todo
@@ -15,7 +16,7 @@ from app.get_context import Context
 
 router = APIRouter(prefix="/todo", tags=['To Do notes'])
 
-@router.get("/", response_model=Union[List[ToDoModel], dict])
+@router.get("/", response_model=Union[List[ToDoModel], dict], dependencies=[Depends(get_current_active_user)])
 async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[str] = None):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -27,7 +28,7 @@ async def get_all(ctx: Context, before: Optional[str] = None, after: Optional[st
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@router.get("/{id}", response_model=Union[ToDoModel, dict])
+@router.get("/{id}", response_model=Union[ToDoModel, dict], dependencies=[Depends(get_current_active_user)])
 async def get_by_id(ctx: Context, id: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -38,7 +39,7 @@ async def get_by_id(ctx: Context, id: str):
         logger.error(f'GET /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-@router.post("/", response_model=dict)
+@router.post("/", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def create(ctx: Context, item: ToDoModel):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -49,7 +50,7 @@ async def create(ctx: Context, item: ToDoModel):
         logger.error(f'POST /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.put("/{id}", response_model=dict)
+@router.put("/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def update(ctx: Context, id: str, todo_to_update: ToDoModel):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -60,7 +61,7 @@ async def update(ctx: Context, id: str, todo_to_update: ToDoModel):
         logger.error(f'PUT /<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.patch("/setToCompleted/{id}", response_model=dict)
+@router.patch("/setToCompleted/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def set_to_completed(ctx: Context, id: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -71,7 +72,7 @@ async def set_to_completed(ctx: Context, id: str):
         logger.error(f'PATCH /setToCompleted/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-@router.patch("/setToNotCompleted/{id}", response_model=dict)
+@router.patch("/setToNotCompleted/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def set_to_not_completed(ctx: Context, id: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -82,7 +83,7 @@ async def set_to_not_completed(ctx: Context, id: str):
         logger.error(f'PATCH /setToNotCompleted/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-@router.patch("/addRemainder/{id}", response_model=dict)
+@router.patch("/addRemainder/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def add_remainder(ctx: Context, id: str, new: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -93,7 +94,7 @@ async def add_remainder(ctx: Context, id: str, new: str):
         logger.error(f'PATCH /addRemainder/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-@router.patch("/deleteRemainder/{id}", response_model=dict)
+@router.patch("/deleteRemainder/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def delete_remainder(ctx: Context, id: str, old: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -104,7 +105,7 @@ async def delete_remainder(ctx: Context, id: str, old: str):
         logger.error(f'PATCH /deleteRemainder/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
-@router.patch("/updateRemainder/{id}", response_model=dict)
+@router.patch("/updateRemainder/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def update_remainder(ctx: Context, id: str, old: str, new: str):
     logger = ctx.get('logger')
     client = ctx.get('client')
@@ -115,7 +116,7 @@ async def update_remainder(ctx: Context, id: str, old: str, new: str):
         logger.error(f'PATCH /updateRemainder/<id> returned error: {e}')
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
-@router.delete("/{id}", response_model=dict)
+@router.delete("/{id}", response_model=dict, dependencies=[Depends(get_current_active_user)])
 async def delete(ctx: Context, id: str):
     logger = ctx.get('logger')
     client = ctx.get('client')

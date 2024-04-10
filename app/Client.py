@@ -9,6 +9,10 @@ class Client:
         """Returns the "config" collection"""
         return self.client[self.database_name].get_collection('config')
     
+    def get_users_collection(self):
+        """Returns the "users" collection"""
+        return self.client[self.database_name].get_collection('users')
+    
     def get_todo_collection(self):
         """Returns the "todo" collection"""
         return self.client[self.database_name].get_collection('todo')
