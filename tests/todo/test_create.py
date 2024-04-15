@@ -1,13 +1,18 @@
-from app.get_context import get_context
 from fastapi.testclient import TestClient
 
+from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
-from tests.utils import get_context_for_tests, get_current_user_for_tests, get_todo_document_by_id
+from tests.utils import (
+    get_context_for_tests,
+    get_current_user_for_tests,
+    get_todo_document_by_id,
+)
 
 client = TestClient(app)
 app.dependency_overrides[get_context] = get_context_for_tests
 app.dependency_overrides[get_current_active_user] = get_current_user_for_tests
+
 
 def test_add_document():
     todo = {
@@ -18,7 +23,7 @@ def test_add_document():
         "dueDate": None,
         "remainders": [],
         "tags": [],
-        "category": "gifts"
+        "category": "gifts",
     }
 
     post_response = client.post("/todo/", json=todo)
@@ -27,7 +32,6 @@ def test_add_document():
     assert post_response.json()["status"] == "OK"
     doc_id = post_response.json()["result"]
     assert doc_id is not None
-
 
     new_doc = get_todo_document_by_id(doc_id)
     assert new_doc is not None

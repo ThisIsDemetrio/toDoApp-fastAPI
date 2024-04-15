@@ -1,8 +1,10 @@
 from pydantic import BaseModel
 from typing import List, Union
 
+
 class ToDoModel(BaseModel):
-    """Base model of a \"todo\""""
+    """Base model of a \"todo\" """
+
     id: str
     creationDate: Union[None, str] = ""
     title: str
