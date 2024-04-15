@@ -22,7 +22,9 @@ def get_context_for_tests():
 
     logger: Logger = Logger("NOTSET").get_logger()
     client: Client = Client(TEST_MONGODB_URL, TEST_DATABASE_NAME)
-    pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    pwd_context: CryptContext = CryptContext(
+        schemes=["bcrypt"], deprecated="auto"
+    )
 
     return {
         "settings": settings,
@@ -39,8 +41,8 @@ def get_current_user_for_tests():
     Please note this is intended for unit tests only.
     """
     return {
-        "username": "john",
-        "email": "john@example.com",
+        "username": "py_user",
+        "email": "py_user@example.com",
         "disabled": False,
         "hashed_password": "hashed_password",
     }
@@ -54,7 +56,9 @@ def open_mock_file(file_name=TODO_MOCKS_RELATIVE_PATH):
     return file_content
 
 
-def insert_documents_in_todo_collection(documents, database_name=TEST_DATABASE_NAME):
+def insert_documents_in_todo_collection(
+    documents, database_name=TEST_DATABASE_NAME
+):
     client: Client = Client(TEST_MONGODB_URL, database_name)
     client.get_todo_collection().insert_many(documents)
 
@@ -71,7 +75,9 @@ def get_todo_document_by_id(document_id, database_name=TEST_DATABASE_NAME):
 
 def assert_ko(error_code, res):
     if error_code not in error_handling.error_description_map:
-        raise Exception(f"Error code {error_code} does not exist. Verify your test.")
+        raise Exception(
+            f"Error code {error_code} does not exist. Verify your test."
+        )
 
     assert res.status_code == 200
     assert res.json()["status"] == "KO"

@@ -1,11 +1,15 @@
-from app.error_handling import return_error, ErrorModel
 from app.Client import Client, ReturnModel
+from app.error_handling import ErrorModel, return_error
 from app.ErrorCode import ErrorCode
 from utils.is_valid_iso_date import is_valid_iso_date
 
 
 async def update_remainder_to_todo(
-    client: Client, id: str, old_remainder: str, new_remainder: str
+    client: Client,
+    username: str,
+    id: str,
+    old_remainder: str,
+    new_remainder: str,
 ) -> ReturnModel | ErrorModel:
     """
     Change a remainder, replacing an existing one with a new one, to an existing "todo" document
@@ -18,14 +22,14 @@ async def update_remainder_to_todo(
     collection = client.get_todo_collection()
 
     pull_result = collection.update_one(
-        {"id": id}, {"$pull": {"remainders": old_remainder}}
+        {"id": id, "user": username}, {"$pull": {"remainders": old_remainder}}
     )
     if pull_result.modified_count != 1:
         # TODO: Is this error because the remainder didn't exist, or the document has not been found?
-        return return_error(ErrorCode.C03)
+        return return_error(ErrorCode.A01)
 
     push_result = collection.update_one(
-        {"id": id}, {"$push": {"remainders": new_remainder}}
+        {"id": id, "user": username}, {"$push": {"remainders": new_remainder}}
     )
     if push_result.modified_count == 1:
         return {"status": "OK", "result": id}

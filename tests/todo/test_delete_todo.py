@@ -22,34 +22,36 @@ app.dependency_overrides[get_current_active_user] = get_current_user_for_tests
 
 @pytest.fixture(autouse=True)
 def setup_on_each_test():
-    # Safety check, we clean up the collection
-    clear_todo_collection()
-
-    # We add test files
     todos = open_mock_file()
     insert_documents_in_todo_collection(todos)
 
-    # Run the test
     yield
 
     # After: we clear the "todo" collection
     clear_todo_collection()
 
 
-def test_add_remainder():
-    add_remainder = client.patch(
-        "/todo/addRemainder/10001?new=2021-11-09T13:45:00.000Z"
-    )
+def test_delete_document():
+    id = "10001"
+    res = client.delete(f"/todo/{id}")
 
-    assert add_remainder.status_code == 200
-    assert add_remainder.json()["status"] == "OK"
+    assert res.status_code == 200
+    assert res.json()["status"] == "OK"
 
-    updated_doc = get_todo_document_by_id("10001")
-    assert updated_doc["remainders"] == ["2021-11-09T13:45:00.000Z"]
+    deleted_doc = get_todo_document_by_id(id)
+    assert deleted_doc is None
 
 
-def test_fail_for_invalid_dates_in_remainder_methods():
-    assert_ko(
-        ErrorCode.A02,
-        client.patch("/todo/addRemainder/10002?new=2021-11-T16:0:00.000Z"),
-    )
+def test_fail_to_delete_non_existing_document():
+    id = "not-a-document"
+    res = client.delete(f"/todo/{id}")
+
+    assert_ko(ErrorCode.A01, res)
+    assert res.json()["id"] == id
+
+
+def test_fail_delete_note_of_another_user():
+    id = "10004"
+    res = client.delete(f"/todo/{id}")
+
+    assert_ko(ErrorCode.A01, res)

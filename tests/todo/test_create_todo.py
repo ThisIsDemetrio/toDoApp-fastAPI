@@ -26,16 +26,17 @@ def test_add_document():
         "category": "gifts",
     }
 
-    post_response = client.post("/todo/", json=todo)
+    res = client.post("/todo/", json=todo)
 
-    assert post_response.status_code == 200
-    assert post_response.json()["status"] == "OK"
-    doc_id = post_response.json()["result"]
+    assert res.status_code == 200
+    assert res.json()["status"] == "OK"
+    doc_id = res.json()["result"]
     assert doc_id is not None
 
     new_doc = get_todo_document_by_id(doc_id)
     assert new_doc is not None
     assert new_doc["id"] == doc_id
     assert new_doc["title"] == "Buy flowers"
+    assert new_doc["user"] == "py_user"
     assert new_doc["category"] == "gifts"
     assert new_doc["creationDate"] is not None

@@ -2,6 +2,7 @@
     {
         "id": "10001",
         "creationDate": "2021-11-06T14:22:31.000Z",
+        "user": "py_user",
         "title": "Call the dentist",
         "description": "Number 555-123-1230, get appointment asap",
         "completed": false,
@@ -12,7 +13,8 @@
     },
     {
         "id": "10002",
-        "creationDate": "2021-11-03T09:10:00.000Z",
+        "creationDate": "2021-11-08T09:10:00.000Z",
+        "user": "py_user",
         "title": "Book a table to lunch with papa",
         "description": "At Casero's pizza",
         "completed": false,
@@ -24,6 +26,7 @@
     {
         "id": "10003",
         "creationDate": "2021-11-14T20:00:00.000Z",
+        "user": "py_user",
         "title": "Buy cat food",
         "description": "",
         "completed": true,
@@ -35,6 +38,31 @@
     {
         "id": "10004",
         "creationDate": "2021-11-17T15:00:00.000Z",
+        "user": "not_a_py_user",
+        "title": "Call an ambulance",
+        "description": "but not for me!",
+        "completed": false,
+        "dueDate": null,
+        "remainders": [],
+        "tags": ["jokes"],
+        "category": "self"
+    },
+    {
+        "id": "10005",
+        "creationDate": "2021-11-17T18:00:00.000Z",
+        "user": "py_user",
+        "title": "Buy dinner for two",
+        "description": "Stir fry",
+        "completed": false,
+        "dueDate": "2021-11-17T21:00:00.000Z",
+        "remainders": [],
+        "tags": ["groceries", "dinner"],
+        "category": "self"
+    },
+    {
+        "id": "10006",
+        "creationDate": "2021-11-17T19:58:22.000Z",
+        "user": "py_user",
         "title": "Hit the gym",
         "description": "",
         "completed": false,
@@ -44,14 +72,51 @@
         "category": "health"
     },
     {
-        "id": "10005",
-        "creationDate": "2021-11-17T18:00:00.000Z",
-        "title": "Buy dinner for two",
-        "description": "Stir fry",
+        "id": "10007",
+        "creationDate": "2021-11-18T07:45:00.000Z",
+        "user": "py_user",
+        "title": "Call Jade for a meet",
+        "description": "",
+        "completed": true,
+        "dueDate": null,
+        "remainders": [],
+        "tags": ["friends"],
+        "category": "friends"
+    },
+    {
+        "id": "10008",
+        "creationDate": "2021-11-18T11:00:00.000Z",
+        "user": "not_a_py_user",
+        "title": "Buy dog food",
+        "description": "",
+        "completed": true,
+        "dueDate": null,
+        "remainders": [],
+        "tags": ["groceries"],
+        "category": "pets"
+    },
+    {
+        "id": "10009",
+        "creationDate": "2021-11-17T15:00:00.000Z",
+        "user": "not_a_py_user",
+        "title": "Buy new shoes",
+        "description": "",
         "completed": false,
         "dueDate": null,
         "remainders": [],
-        "tags": ["groceries", "take-out dinner"],
-        "category": "self"
+        "tags": ["gym"],
+        "category": "health"
+    },
+    {
+        "id": "10010",
+        "creationDate": "2021-11-18T14:42:11.000Z",
+        "user": "py_user",
+        "title": "Aperitif with Jade",
+        "description": "Downtown",
+        "completed": false,
+        "dueDate": null,
+        "remainders": ["2021-11-18T18:30:00.000Z"],
+        "tags": ["night-out", "dinner"],
+        "category": "friends"
     }
 ]

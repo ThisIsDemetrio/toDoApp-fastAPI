@@ -1,5 +1,6 @@
-from pydantic import BaseModel
 from typing import List, Union
+
+from pydantic import BaseModel
 
 
 class ToDoModel(BaseModel):
@@ -7,6 +8,7 @@ class ToDoModel(BaseModel):
 
     id: str
     creationDate: Union[None, str] = ""
+    user: Union[None, str] = ""
     title: str
     description: str = ""
     completed: bool = False

@@ -1,10 +1,10 @@
-from app.error_handling import return_error, ErrorModel
 from app.Client import Client, ReturnModel
+from app.error_handling import ErrorModel, return_error
 from app.ErrorCode import ErrorCode
 
 
 async def set_todo_to_not_completed(
-    client: Client, id: str
+    client: Client, username: str, id: str
 ) -> ReturnModel | ErrorModel:
     """
     Set the "completed" flag on a "todo" document to "False"
@@ -12,10 +12,11 @@ async def set_todo_to_not_completed(
     collection = client.get_todo_collection()
 
     result = collection.update_one(
-        {"id": id, "completed": True}, {"$set": {"completed": False}}
+        {"id": id, "user": username, "completed": True},
+        {"$set": {"completed": False}},
     )
     if result.modified_count == 1:
         return {"status": "OK", "result": id}
     else:
-        # TODO: Is this error because the todo was already not completed, or it has not been found?
+        # TODO: Is this error because the todo was already completed, or it has not been found, or the user is wrong?
         return return_error(ErrorCode.C02)

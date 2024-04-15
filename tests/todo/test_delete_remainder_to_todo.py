@@ -1,8 +1,8 @@
 import pytest
-from app.ErrorCode import ErrorCode
-from app.get_context import get_context
 from fastapi.testclient import TestClient
 
+from app.ErrorCode import ErrorCode
+from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
 from tests.utils import (
@@ -37,28 +37,29 @@ def setup_on_each_test():
 
 
 def test_delete_remainder():
-    add_remainder = client.patch(
+    res = client.patch(
         "/todo/deleteRemainder/10002?old=2021-11-08T16:00:00.000Z"
     )
 
-    assert add_remainder.status_code == 200
-    assert add_remainder.json()["status"] == "OK"
+    assert res.status_code == 200
+    assert res.json()["status"] == "OK"
 
     updated_doc = get_todo_document_by_id("10002")
     assert updated_doc["remainders"] == []
 
 
 def test_fail_to_delete_non_existing_remainder():
-    updated_doc = get_todo_document_by_id("10002")
+    id = "10002"
+    remainder = "2018-11-13T16:00:00.000Z"
+
+    updated_doc = get_todo_document_by_id(id)
     num_of_remainders = len(updated_doc["remainders"])
 
-    add_remainder = client.patch(
-        "/todo/deleteRemainder/10002?old=2018-11-13T16:00:00.000Z"
-    )
+    res = client.patch(f"/todo/deleteRemainder/{id}?old={remainder}")
 
-    assert_ko(ErrorCode.C03, add_remainder)
+    assert_ko(ErrorCode.A01, res)
 
-    updated_doc = get_todo_document_by_id("10002")
+    updated_doc = get_todo_document_by_id(id)
     assert num_of_remainders == len(updated_doc["remainders"])
 
 
@@ -67,3 +68,11 @@ def test_fail_for_invalid_dates_in_remainder_methods():
         ErrorCode.A02,
         client.patch("/todo/deleteRemainder/10002?old=202111-T16:00:00.000Z"),
     )
+
+
+def test_fail_delete_remainder_to_another_user_note():
+    id = "10004"
+    remainder = "2021-11-09T13:45:00.000Z"
+    res = client.patch(f"/todo/deleteRemainder/{id}?old={remainder}")
+
+    assert_ko(ErrorCode.A01, res)

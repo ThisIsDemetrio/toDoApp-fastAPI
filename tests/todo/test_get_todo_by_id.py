@@ -10,7 +10,6 @@ from tests.utils import (
     clear_todo_collection,
     get_context_for_tests,
     get_current_user_for_tests,
-    get_todo_document_by_id,
     insert_documents_in_todo_collection,
     open_mock_file,
 )
@@ -36,31 +35,28 @@ def setup_on_each_test():
     clear_todo_collection()
 
 
-def test_update_remainder():
-    add_remainder = client.patch(
-        "/todo/updateRemainder/10004?old=2021-11-17T20:30:00.000Z&new=2021-11-17T20:45:00.000Z"
-    )
+def test_get_document_by_id():
+    id = "10001"
+    res = client.get(f"/todo/{id}")
 
-    assert add_remainder.status_code == 200
-    assert add_remainder.json()["status"] == "OK"
-
-    updated_doc = get_todo_document_by_id("10004")
-    assert updated_doc["remainders"] == [
-        "2021-11-17T20:00:00.000Z",
-        "2021-11-17T20:45:00.000Z",
-    ]
+    assert res.status_code == 200
+    assert res.json()["result"]["id"] == id
+    assert res.json()["result"]["title"] == "Call the dentist"
+    assert res.json()["result"]["category"] == "health"
 
 
-def test_fail_for_invalid_dates_in_remainder_methods():
-    assert_ko(
-        ErrorCode.A02,
-        client.patch(
-            "/todo/updateRemainder/10002?old=2021-11-17T:30:00.000Z&new=2021-11-17T20:45:00.000Z"
-        ),
-    )
-    assert_ko(
-        ErrorCode.A02,
-        client.patch(
-            "/todo/updateRemainder/10002?old=2021-11-17T20:30:00.000Z&new=202-117T20:45:00.000Z"
-        ),
-    )
+def test_fail_to_get_document_by_id():
+    res = client.get("/todo/notadocument")
+
+    assert res.status_code == 200
+    assert_ko(ErrorCode.A01, res)
+    assert res.json()["id"] == "notadocument"
+
+
+def test_fail_get_document_of_another_user():
+    id = "10004"
+    res = client.get(f"/todo/{id}")
+
+    assert res.status_code == 200
+    assert_ko(ErrorCode.A01, res)
+    assert res.json()["id"] == "10004"

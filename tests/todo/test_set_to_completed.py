@@ -37,19 +37,31 @@ def setup_on_each_test():
 
 
 def test_set_to_complete():
-    set_to_true_response = client.patch("/todo/setToCompleted/10002")
+    id = "10002"
+    set_to_true_response = client.patch(f"/todo/setToCompleted/{id}")
 
     assert set_to_true_response.status_code == 200
     assert set_to_true_response.json()["status"] == "OK"
 
-    updated_doc = get_todo_document_by_id("10002")
+    updated_doc = get_todo_document_by_id(id)
     assert updated_doc["completed"] is True
 
 
 def test_fail_to_set_to_complete_if_already_completed():
-    res = client.patch("/todo/setToCompleted/10003")
+    id = "10003"
+    res = client.patch(f"/todo/setToCompleted/{id}")
 
     assert_ko(ErrorCode.C01, res)
 
-    updated_doc = get_todo_document_by_id("10003")
+    updated_doc = get_todo_document_by_id(id)
+    assert updated_doc["completed"] is True
+
+
+def test_fail_to_set_to_complete_another_user_note():
+    id = "10008"
+    res = client.patch(f"/todo/setToCompleted/{id}")
+
+    assert_ko(ErrorCode.C01, res)
+
+    updated_doc = get_todo_document_by_id(id)
     assert updated_doc["completed"] is True

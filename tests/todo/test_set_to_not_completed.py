@@ -37,19 +37,31 @@ def setup_on_each_test():
 
 
 def test_set_to_not_complete():
-    set_to_not_complete = client.patch("/todo/setToNotCompleted/10003")
+    id = "10003"
+    res = client.patch(f"/todo/setToNotCompleted/{id}")
 
-    assert set_to_not_complete.status_code == 200
-    assert set_to_not_complete.json()["status"] == "OK"
+    assert res.status_code == 200
+    assert res.json()["status"] == "OK"
 
-    updated_doc = get_todo_document_by_id("10002")
+    updated_doc = get_todo_document_by_id(id)
     assert updated_doc["completed"] is False
 
 
 def test_fail_set_to_not_complete_if_not_completed_yet():
-    res = client.patch("/todo/setToNotCompleted/10002")
+    id = "10002"
+    res = client.patch(f"/todo/setToNotCompleted/{id}")
 
     assert_ko(ErrorCode.C02, res)
 
-    updated_doc = get_todo_document_by_id("10002")
+    updated_doc = get_todo_document_by_id(id)
+    assert updated_doc["completed"] is False
+
+
+def test_fail_to_set_to_not_complete_another_user_note():
+    id = "10004"
+    res = client.patch(f"/todo/setToNotCompleted/{id}")
+
+    assert_ko(ErrorCode.C02, res)
+
+    updated_doc = get_todo_document_by_id(id)
     assert updated_doc["completed"] is False
