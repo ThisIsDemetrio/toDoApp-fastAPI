@@ -4,26 +4,28 @@ This API is written with FastAPI and Python for a ToDo app.
 
 ## Prerequisites
 
-Before to start, please note this app is built with Python 3.10 in mind. Please mind that using previous version might create issues on your development experience.
+Before to start, please note this app is built with Python 3.11 in mind. Please mind that using previous version might create issues on your development experience.
 
 ### Install the virtual environment
 
 If it is the first time you start the application on your machine, remember to set up a virtual machine:
 
 ```shell
-python3.exe -m venv venv
+# For Windows users
+python3.exe -m venv .venv
+
+# From Mac/Linux users
+python3 -m venv .venv
 ```
 
-Then activate with the following for Windows:
+Then activate with the following command to enter the environment:
 
 ```shell
-venv\Scripts\activate
-```
+# For Windows users
+.venv\Scripts\activate
 
-or Linux:
-
-```shell
-source venv/scripts/activate
+# From Mac/Linux users
+source venv/bin/activate
 ```
 
 Then install dependencies:
@@ -57,11 +59,11 @@ You can start the application with the following:
 uvicorn main:app --reload
 ```
 
-It will be exposed at `http://localhost:8000``
+It will be exposed at `http://localhost:8000`
 
-# How to test
+## How to test
 
-Every test should be included in the `tests` folder. We use `Pytest` to run tests. Simply launch
+Every test should be included in the `tests` folder. We use `Pytest` to run tests. Simply launch:
 
 ```shell
 pytest
