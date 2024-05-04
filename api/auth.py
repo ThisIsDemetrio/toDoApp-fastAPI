@@ -6,7 +6,9 @@ from app.get_context import Context
 
 from models.Signup import Signup
 from models.Token import Token
-from services.auth.create_user_and_generate_token import create_user_and_generate_token
+from services.auth.create_user_and_generate_token import (
+    create_user_and_generate_token,
+)
 from services.auth.login_and_generate_token import login_and_generate_token
 from services.auth.utils import generate_token
 
@@ -29,7 +31,8 @@ async def signup(ctx: Context, form_data: Signup) -> Token:
         result = create_user_and_generate_token(ctx, form_data)
         if result.get("status") == "KO":
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail=result.error_description
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=result.error_description,
             )
         return result.get("token")
     except Exception as e:
@@ -47,7 +50,9 @@ async def login(
     )
 
     try:
-        token = login_and_generate_token(ctx, form_data.username, form_data.password)
+        token = login_and_generate_token(
+            ctx, form_data.username, form_data.password
+        )
         if not token:
             logger.warning(
                 f"Unauthorized login for username {form_data.username}: username not found."

@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.ErrorCode import ErrorCode
+from app.error_handling import BadRequestDetail
 from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
@@ -64,10 +65,14 @@ def test_fail_to_delete_non_existing_remainder():
 
 
 def test_fail_for_invalid_dates_in_remainder_methods():
-    assert_ko(
-        ErrorCode.A02,
-        client.patch("/todo/deleteRemainder/10002?old=202111-T16:00:00.000Z"),
-    )
+    id = "10002"
+    old = "202111-T16:00:00.000Z"
+    res = client.patch(f"/todo/deleteRemainder/{id}?old={old}")
+
+    assert res.status_code == 400
+    assert res.json()["detail"] == BadRequestDetail.DATE_NOT_VALID
+    assert res.json()["key"] == "old"
+    assert res.json()["value"] == old
 
 
 def test_fail_delete_remainder_to_another_user_todo():
