@@ -73,7 +73,7 @@ def test_fail_for_invalid_dates_in_remainder_methods(
     assert_ko(ErrorCode.A02, client.patch(url))
 
 
-def test_fail_to_set_to_not_complete_another_user_note():
+def test_fail_to_set_to_not_complete_another_user_todo():
     id = "10004"
     old_remainder = "2021-11-17T20:30:00.000Z"
     new_remainder = "2021-11-17T20:45:00.000Z"

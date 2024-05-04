@@ -70,7 +70,7 @@ def test_fail_for_invalid_dates_in_remainder_methods():
     )
 
 
-def test_fail_delete_remainder_to_another_user_note():
+def test_fail_delete_remainder_to_another_user_todo():
     id = "10004"
     remainder = "2021-11-09T13:45:00.000Z"
     res = client.patch(f"/todo/deleteRemainder/{id}?old={remainder}")

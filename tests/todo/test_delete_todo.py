@@ -50,7 +50,7 @@ def test_fail_to_delete_non_existing_document():
     assert res.json()["id"] == id
 
 
-def test_fail_delete_note_of_another_user():
+def test_fail_delete_todo_of_another_user():
     id = "10004"
     res = client.delete(f"/todo/{id}")
 

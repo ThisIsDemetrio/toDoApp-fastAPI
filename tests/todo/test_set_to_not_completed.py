@@ -57,7 +57,7 @@ def test_fail_set_to_not_complete_if_not_completed_yet():
     assert updated_doc["completed"] is False
 
 
-def test_fail_to_set_to_not_complete_another_user_note():
+def test_fail_to_set_to_not_complete_another_user_todo():
     id = "10004"
     res = client.patch(f"/todo/setToNotCompleted/{id}")
 

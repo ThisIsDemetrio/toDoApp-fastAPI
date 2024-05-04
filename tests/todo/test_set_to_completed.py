@@ -57,7 +57,7 @@ def test_fail_to_set_to_complete_if_already_completed():
     assert updated_doc["completed"] is True
 
 
-def test_fail_to_set_to_complete_another_user_note():
+def test_fail_to_set_to_complete_another_user_todo():
     id = "10008"
     res = client.patch(f"/todo/setToCompleted/{id}")
 
