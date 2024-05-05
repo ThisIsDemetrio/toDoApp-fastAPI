@@ -1,12 +1,12 @@
+from typing import Literal
 import pytest
 from fastapi.testclient import TestClient
 
-from app.ErrorCode import ErrorCode
+from app.error_handling import BadRequestDetail
 from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
 from tests.utils import (
-    assert_ko,
     clear_todo_collection,
     get_context_for_tests,
     get_current_user_for_tests,
@@ -59,16 +59,23 @@ def test_get_all(expected_count, before, after):
 
 
 @pytest.mark.parametrize(
-    "before,after",
+    "before,after,invalidKey",
     [
-        ("2021-11-T16:0:00.000Z", None),
-        ("2021-11-03T16:00:00.000Z", "202111-T16:00:00.000Z"),
+        ("2021-11-T16:0:00.000Z", None, "before"),
+        ("2021-11-03T16:00:00.000Z", "202111-T16:00:00.000Z", "after"),
     ],
 )
-def test_fail_for_get_all_with_invalid_dates(before, after):
+def test_fail_for_get_all_with_invalid_dates(
+    before: str, after: str, invalidKey: Literal["before", "after"]
+):
     url = "/todo"
     if before is not None:
-        url = "?".join([url, "before={before}"])
+        url = "?".join([url, f"before={before}"])
     if after is not None:
-        url = ("?" if before is None else "&").join([url, "after={after}"])
-    assert_ko(ErrorCode.A02, client.get(url))
+        url = ("?" if before is None else "&").join([url, f"after={after}"])
+
+    res = client.get(url)
+    assert res.status_code == 400
+    assert res.json()["detail"] == BadRequestDetail.DATE_NOT_VALID
+    assert res.json()["key"] == invalidKey
+    assert res.json()["value"] == after if invalidKey == "after" else before

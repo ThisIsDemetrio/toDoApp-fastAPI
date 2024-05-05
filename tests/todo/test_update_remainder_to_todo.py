@@ -1,7 +1,9 @@
+from typing import Literal
 import pytest
 from fastapi.testclient import TestClient
 
 from app.ErrorCode import ErrorCode
+from app.error_handling import BadRequestDetail
 from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
@@ -56,21 +58,26 @@ def test_update_remainder():
 
 
 @pytest.mark.parametrize(
-    "id,old,new",
+    "id,old,new,invalidKey",
     [
-        ("10002", "2021-11-17T:30:00.000Z", "2021-11-17T20:45:00.000Z"),
-        ("10002", "2021-11-17T20:30:00.000Z", "202-117T20:45:00.000Z"),
+        ("10002", "2021-11-17T:30:00.000Z", "2021-11-17T20:45:00.000Z", "old"),
+        ("10002", "2021-11-17T20:30:00.000Z", "202-117T20:45:00.000Z", "new"),
     ],
 )
 def test_fail_for_invalid_dates_in_remainder_methods(
-    id: str, old: str, new: str
+    id: str, old: str, new: str, invalidKey: Literal["new", "old"]
 ):
     url = f"/todo/updateRemainder/{id}"
     if old is not None:
         url = "?".join([url, f"old={old}"])
     if new is not None:
         url = ("?" if old is None else "&").join([url, f"new={new}"])
-    assert_ko(ErrorCode.A02, client.patch(url))
+
+    res = client.patch(url)
+    assert res.status_code == 400
+    assert res.json()["detail"] == BadRequestDetail.DATE_NOT_VALID
+    assert res.json()["key"] == invalidKey
+    assert res.json()["value"] == new if invalidKey == "new" else old
 
 
 def test_fail_to_set_to_not_complete_another_user_todo():

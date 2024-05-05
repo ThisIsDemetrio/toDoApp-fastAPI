@@ -1,14 +1,18 @@
 from app.ErrorCode import ErrorCode
 
+
 error_description_map: dict = {
-    ErrorCode.A01: "idNotFound",
-    ErrorCode.A02: "dateNotValid",
+    ErrorCode.A01: "idNotFoundInDatabase",
     ErrorCode.C01: "todoAlreadyCompleted",
     ErrorCode.C02: "todoNotCompletedYet",
     ErrorCode.C03: "remainderNotFound",
     ErrorCode.U00: "unhandledException",
     ErrorCode.Y00: "usernameAlreadyTaken",
 }
+
+
+class BadRequestDetail:
+    DATE_NOT_VALID = "date not valid"
 
 
 class ErrorModel:

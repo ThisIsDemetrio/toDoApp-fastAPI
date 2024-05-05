@@ -1,7 +1,6 @@
 from app.Client import Client, ReturnModel
 from app.error_handling import ErrorModel, return_error
 from app.ErrorCode import ErrorCode
-from utils.is_valid_iso_date import is_valid_iso_date
 
 
 async def add_remainder_to_todo(
@@ -10,8 +9,6 @@ async def add_remainder_to_todo(
     """
     Add a new remainder to an existing "todo" document
     """
-    if not is_valid_iso_date(remainder):
-        return return_error(ErrorCode.A02, key="payload")
 
     collection = client.get_todo_collection()
 

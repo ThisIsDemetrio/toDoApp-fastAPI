@@ -2,6 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.ErrorCode import ErrorCode
+from app.error_handling import BadRequestDetail
 from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
@@ -49,10 +50,13 @@ def test_add_remainder():
 
 
 def test_fail_for_invalid_dates_in_remainder_methods():
-    assert_ko(
-        ErrorCode.A02,
-        client.patch("/todo/addRemainder/10002?new=2021-11-T16:0:00.000Z"),
-    )
+    id = "10002"
+    new = "2021-11-T16:0:00.000Z"
+    res = client.patch(f"/todo/addRemainder/{id}?new={new}")
+    assert res.status_code == 400
+    assert res.json()["detail"] == BadRequestDetail.DATE_NOT_VALID
+    assert res.json()["key"] == "new"
+    assert res.json()["value"] == new
 
 
 def test_fail_add_remainder_to_another_user_todo():

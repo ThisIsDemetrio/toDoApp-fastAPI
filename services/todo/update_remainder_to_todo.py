@@ -1,7 +1,6 @@
 from app.Client import Client, ReturnModel
 from app.error_handling import ErrorModel, return_error
 from app.ErrorCode import ErrorCode
-from utils.is_valid_iso_date import is_valid_iso_date
 
 
 async def update_remainder_to_todo(
@@ -14,10 +13,6 @@ async def update_remainder_to_todo(
     """
     Change a remainder, replacing an existing one with a new one, to an existing "todo" document
     """
-    if not is_valid_iso_date(old_remainder):
-        return return_error(ErrorCode.A02, key="new_remainder")
-    if not is_valid_iso_date(new_remainder):
-        return return_error(ErrorCode.A02, key="old_remainder")
 
     collection = client.get_todo_collection()
 

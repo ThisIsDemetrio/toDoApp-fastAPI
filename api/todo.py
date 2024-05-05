@@ -1,7 +1,9 @@
 from typing import Annotated, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 
+from app.error_handling import BadRequestDetail
 from app.get_context import Context
 from models.Todo import ToDoModel
 from models.User import User
@@ -16,6 +18,7 @@ from services.todo.set_todo_to_completed import set_todo_to_completed
 from services.todo.set_todo_to_not_completed import set_todo_to_not_completed
 from services.todo.update_remainder_to_todo import update_remainder_to_todo
 from services.todo.update_todo import update_todo
+from utils.is_valid_iso_date import is_valid_iso_date
 
 router = APIRouter(prefix="/todo", tags=["To Do notes"])
 
@@ -34,6 +37,26 @@ async def get_all(
     logger = ctx.get("logger")
     client = ctx.get("client")
     username = current_user.get("username")
+
+    if before is not None and not is_valid_iso_date(before):
+        print(before)
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": BadRequestDetail.DATE_NOT_VALID,
+                "key": "before",
+                "value": before,
+            },
+        )
+    if after is not None and not is_valid_iso_date(after):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": BadRequestDetail.DATE_NOT_VALID,
+                "key": "after",
+                "value": after,
+            },
+        )
 
     print(before, after)
     try:
@@ -98,7 +121,6 @@ async def update(
     client = ctx.get("client")
     username = current_user.get("username")
 
-    print(todo_to_update.user, username)
     if todo_to_update.user != username:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -169,6 +191,16 @@ async def add_remainder(
     client = ctx.get("client")
     username = current_user.get("username")
 
+    if not is_valid_iso_date(new):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": BadRequestDetail.DATE_NOT_VALID,
+                "key": "new",
+                "value": new,
+            },
+        )
+
     try:
         return await add_remainder_to_todo(client, username, id, new)
     except Exception as e:
@@ -190,6 +222,16 @@ async def delete_remainder(
     logger = ctx.get("logger")
     client = ctx.get("client")
     username = current_user.get("username")
+
+    if not is_valid_iso_date(old):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": BadRequestDetail.DATE_NOT_VALID,
+                "key": "old",
+                "value": old,
+            },
+        )
 
     try:
         return await delete_remainder_to_todo(client, username, id, old)
@@ -213,6 +255,25 @@ async def update_remainder(
     logger = ctx.get("logger")
     client = ctx.get("client")
     username = current_user.get("username")
+
+    if not is_valid_iso_date(old):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": BadRequestDetail.DATE_NOT_VALID,
+                "key": "old",
+                "value": old,
+            },
+        )
+    if not is_valid_iso_date(new):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content={
+                "detail": BadRequestDetail.DATE_NOT_VALID,
+                "key": "new",
+                "value": new,
+            },
+        )
 
     try:
         return await update_remainder_to_todo(client, username, id, old, new)

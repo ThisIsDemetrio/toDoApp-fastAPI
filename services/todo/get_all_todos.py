@@ -4,9 +4,7 @@ from pymongo.collection import Collection
 
 from app import Client
 from app.Client import ReturnModel
-from app.error_handling import ErrorModel, return_error
-from app.ErrorCode import ErrorCode
-from utils.is_valid_iso_date import is_valid_iso_date
+from app.error_handling import ErrorModel
 
 
 async def get_all_todos(
@@ -23,13 +21,9 @@ async def get_all_todos(
     timespan_query = {}
 
     if before is not None:
-        if not is_valid_iso_date(before):
-            return return_error(ErrorCode.A02, key="before")
         timespan_query["$lte"] = before
 
     if after is not None:
-        if not is_valid_iso_date(after):
-            return return_error(ErrorCode.A02, key="after")
         timespan_query["$gte"] = after
 
     collection: Collection = client.get_todo_collection()
