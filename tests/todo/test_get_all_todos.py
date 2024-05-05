@@ -51,7 +51,6 @@ def test_get_all(expected_count, before, after):
         url = "?".join([url, f"before={before}"])
     if after is not None:
         url = ("?" if before is None else "&").join([url, f"after={after}"])
-    print(url)
     res = client.get(url)
 
     assert res.status_code == status.HTTP_200_OK

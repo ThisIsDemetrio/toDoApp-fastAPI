@@ -43,7 +43,6 @@ async def get_all(
     if after is not None and not is_valid_iso_date(after):
         return InvalidDateBadRequest(key="after", value=after)
 
-    print(before, after)
     try:
         return await get_all_todos(client, username, before, after)
     except Exception as e:
