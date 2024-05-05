@@ -1,11 +1,11 @@
-from app.Client import Client, ReturnModel
-from app.error_handling import ErrorModel, return_error
-from app.ErrorCode import ErrorCode
+from app.Client import Client
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
+from app.responses.SuccessResponse import SuccessResponse
 
 
 async def add_remainder_to_todo(
     client: Client, username: str, id: str, remainder: str
-) -> ReturnModel | ErrorModel:
+) -> SuccessResponse | IdNotFoundResponse:
     """
     Add a new remainder to an existing "todo" document
     """
@@ -16,7 +16,7 @@ async def add_remainder_to_todo(
         {"id": id, "user": username}, {"$push": {"remainders": remainder}}
     )
     if result.modified_count == 1:
-        return {"status": "OK", "result": id}
+        return SuccessResponse(result=id)
     else:
         # NOTE: I am assuming the only error can occur is because the document has not been found
-        return return_error(ErrorCode.A01)
+        return IdNotFoundResponse(id=id)

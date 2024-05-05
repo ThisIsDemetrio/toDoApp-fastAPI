@@ -1,11 +1,11 @@
-from app.Client import Client, ReturnModel
-from app.error_handling import ErrorModel, return_error
-from app.ErrorCode import ErrorCode
+from app.Client import Client
+from app.responses.AlreadyCompletedResponse import AlreadyCompletedResponse
+from app.responses.SuccessResponse import SuccessResponse
 
 
 async def set_todo_to_completed(
     client: Client, username: str, id: str
-) -> ReturnModel | ErrorModel:
+) -> SuccessResponse | AlreadyCompletedResponse:
     """
     Set the "completed" flag on a "todo" document to "True"
     """
@@ -16,7 +16,7 @@ async def set_todo_to_completed(
         {"$set": {"completed": True}},
     )
     if result.modified_count == 1:
-        return {"status": "OK", "result": id}
+        return SuccessResponse(result=id)
     else:
         # TODO: Is this error because the todo was already completed, or it has not been found, or the user is wrong?
-        return return_error(ErrorCode.C01)
+        return AlreadyCompletedResponse(id=id)

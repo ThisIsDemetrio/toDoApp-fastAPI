@@ -1,11 +1,11 @@
-from app.Client import Client, ReturnModel
-from app.error_handling import ErrorModel, return_error
-from app.ErrorCode import ErrorCode
+from app.Client import Client
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
+from app.responses.SuccessResponse import SuccessResponse
 
 
 async def delete_todo(
     client: Client, username: str, id: str
-) -> ReturnModel | ErrorModel:
+) -> SuccessResponse | IdNotFoundResponse:
     """
     Handle the deletion of a "todo" document
     """
@@ -13,6 +13,6 @@ async def delete_todo(
 
     result = collection.delete_one({"id": id, "user": username})
     if result.deleted_count == 1:
-        return {"status": "OK", "result": id}
+        return SuccessResponse(result=id)
     else:
-        return return_error(ErrorCode.A01, id=id)
+        return IdNotFoundResponse(id=id)

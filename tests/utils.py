@@ -2,8 +2,8 @@ import json
 import os
 
 from passlib.context import CryptContext
+from fastapi import status
 
-from app import error_handling
 from app.Client import Client
 from app.Logger import Logger
 from app.Settings import Settings
@@ -73,12 +73,7 @@ def get_todo_document_by_id(document_id, database_name=TEST_DATABASE_NAME):
     return client.get_todo_collection().find_one({"id": document_id})
 
 
-def assert_ko(error_code, res):
-    if error_code not in error_handling.error_description_map:
-        raise Exception(
-            f"Error code {error_code} does not exist. Verify your test."
-        )
-
-    assert res.status_code == 200
+def assert_ko(error_code, res, status_code=status.HTTP_200_OK):
+    assert res.status_code == status_code
     assert res.json()["status"] == "KO"
     assert res.json()["code"] == error_code

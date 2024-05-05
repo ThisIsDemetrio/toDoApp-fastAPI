@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import status
 
-from app.ErrorCode import ErrorCode
 from app.get_context import get_context
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
 from main import app
 from services.auth.utils import get_current_active_user
 from tests.utils import (
@@ -35,7 +36,7 @@ def test_delete_document():
     id = "10001"
     res = client.delete(f"/todo/{id}")
 
-    assert res.status_code == 200
+    assert res.status_code == status.HTTP_200_OK
     assert res.json()["status"] == "OK"
 
     deleted_doc = get_todo_document_by_id(id)
@@ -46,7 +47,7 @@ def test_fail_to_delete_non_existing_document():
     id = "not-a-document"
     res = client.delete(f"/todo/{id}")
 
-    assert_ko(ErrorCode.A01, res)
+    assert_ko(IdNotFoundResponse.internal_code, res)
     assert res.json()["id"] == id
 
 
@@ -54,4 +55,4 @@ def test_fail_delete_todo_of_another_user():
     id = "10004"
     res = client.delete(f"/todo/{id}")
 
-    assert_ko(ErrorCode.A01, res)
+    assert_ko(IdNotFoundResponse.internal_code, res)

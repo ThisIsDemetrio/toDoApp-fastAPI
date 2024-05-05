@@ -2,7 +2,7 @@ from typing import Annotated, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.errors.InvalidDateBadRequest import InvalidDateBadRequest
+from app.responses.InvalidDateBadRequest import InvalidDateBadRequest
 from app.get_context import Context
 from models.Todo import ToDoModel
 from models.User import User

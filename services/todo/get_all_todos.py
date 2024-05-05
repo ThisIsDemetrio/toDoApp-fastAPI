@@ -3,8 +3,7 @@ from typing import Optional
 from pymongo.collection import Collection
 
 from app import Client
-from app.Client import ReturnModel
-from app.error_handling import ErrorModel
+from app.responses.SuccessResponse import SuccessResponse
 
 
 async def get_all_todos(
@@ -12,7 +11,7 @@ async def get_all_todos(
     username: str,
     before: Optional[str] = None,
     after: Optional[str] = None,
-) -> ReturnModel | ErrorModel:
+) -> SuccessResponse:
     """
     Search all the items in the database.
 
@@ -32,7 +31,6 @@ async def get_all_todos(
     if len(timespan_query.keys()) > 0:
         query.update({"creationDate": timespan_query})
 
-    print(query)
     # TODO: We're returning 1000 elements, but we should handle pagination or something
     documents = collection.find(query, {"_id": 0}).limit(1000)
-    return {"status": "OK", "result": documents}
+    return SuccessResponse(result=list(documents))

@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import status
 
-from app.ErrorCode import ErrorCode
-from app.errors.InvalidDateBadRequest import InvalidDateBadRequest
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
+from app.responses.InvalidDateBadRequest import InvalidDateBadRequest
 from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
@@ -42,7 +43,7 @@ def test_add_remainder():
     remainder = "2021-11-09T13:45:00.000Z"
     res = client.patch(f"/todo/addRemainder/{id}?new={remainder}")
 
-    assert res.status_code == 200
+    assert res.status_code == status.HTTP_200_OK
     assert res.json()["status"] == "OK"
 
     updated_doc = get_todo_document_by_id(id)
@@ -64,4 +65,4 @@ def test_fail_add_remainder_to_another_user_todo():
     remainder = "2021-11-09T13:45:00.000Z"
     res = client.patch(f"/todo/addRemainder/{id}?new={remainder}")
 
-    assert_ko(ErrorCode.A01, res)
+    assert_ko(IdNotFoundResponse.internal_code, res)
