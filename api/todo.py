@@ -1,9 +1,8 @@
 from typing import Annotated, List, Optional, Union
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
 
-from app.error_handling import BadRequestDetail
+from app.errors.InvalidDateBadRequest import InvalidDateBadRequest
 from app.get_context import Context
 from models.Todo import ToDoModel
 from models.User import User
@@ -39,24 +38,10 @@ async def get_all(
     username = current_user.get("username")
 
     if before is not None and not is_valid_iso_date(before):
-        print(before)
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "detail": BadRequestDetail.DATE_NOT_VALID,
-                "key": "before",
-                "value": before,
-            },
-        )
+        return InvalidDateBadRequest(key="before", value=before)
+
     if after is not None and not is_valid_iso_date(after):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "detail": BadRequestDetail.DATE_NOT_VALID,
-                "key": "after",
-                "value": after,
-            },
-        )
+        return InvalidDateBadRequest(key="after", value=after)
 
     print(before, after)
     try:
@@ -192,14 +177,7 @@ async def add_remainder(
     username = current_user.get("username")
 
     if not is_valid_iso_date(new):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "detail": BadRequestDetail.DATE_NOT_VALID,
-                "key": "new",
-                "value": new,
-            },
-        )
+        return InvalidDateBadRequest(key="new", value=new)
 
     try:
         return await add_remainder_to_todo(client, username, id, new)
@@ -224,14 +202,7 @@ async def delete_remainder(
     username = current_user.get("username")
 
     if not is_valid_iso_date(old):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "detail": BadRequestDetail.DATE_NOT_VALID,
-                "key": "old",
-                "value": old,
-            },
-        )
+        return InvalidDateBadRequest(key="old", value=old)
 
     try:
         return await delete_remainder_to_todo(client, username, id, old)
@@ -257,23 +228,10 @@ async def update_remainder(
     username = current_user.get("username")
 
     if not is_valid_iso_date(old):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "detail": BadRequestDetail.DATE_NOT_VALID,
-                "key": "old",
-                "value": old,
-            },
-        )
+        return InvalidDateBadRequest(key="old", value=old)
+
     if not is_valid_iso_date(new):
-        return JSONResponse(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            content={
-                "detail": BadRequestDetail.DATE_NOT_VALID,
-                "key": "new",
-                "value": new,
-            },
-        )
+        return InvalidDateBadRequest(key="new", value=new)
 
     try:
         return await update_remainder_to_todo(client, username, id, old, new)

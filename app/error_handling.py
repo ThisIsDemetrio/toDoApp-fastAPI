@@ -11,10 +11,6 @@ error_description_map: dict = {
 }
 
 
-class BadRequestDetail:
-    DATE_NOT_VALID = "date not valid"
-
-
 class ErrorModel:
     status = ("KO",)
     code: str

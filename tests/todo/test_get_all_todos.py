@@ -2,7 +2,7 @@ from typing import Literal
 import pytest
 from fastapi.testclient import TestClient
 
-from app.error_handling import BadRequestDetail
+from app.errors.InvalidDateBadRequest import InvalidDateBadRequest
 from app.get_context import get_context
 from main import app
 from services.auth.utils import get_current_active_user
@@ -76,6 +76,6 @@ def test_fail_for_get_all_with_invalid_dates(
 
     res = client.get(url)
     assert res.status_code == 400
-    assert res.json()["detail"] == BadRequestDetail.DATE_NOT_VALID
+    assert res.json()["detail"] == InvalidDateBadRequest.detail_message
     assert res.json()["key"] == invalidKey
     assert res.json()["value"] == after if invalidKey == "after" else before
