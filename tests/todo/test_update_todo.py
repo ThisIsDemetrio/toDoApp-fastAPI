@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import status
 
-from app.ErrorCode import ErrorCode
 from app.get_context import get_context
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
 from main import app
 from services.auth.utils import get_current_active_user
 from tests.utils import (
@@ -54,7 +55,7 @@ def test_update_document():
 
     res = client.put(f"/todo/{id}", json=updated_todo)
 
-    assert res.status_code == 200
+    assert res.status_code == status.HTTP_200_OK
     assert res.json()["status"] == "OK"
     assert res.json()["result"] == id
 
@@ -83,7 +84,7 @@ def test_fail_to_update_document():
 
     res = client.put(f"/todo/{id}", json=updated_todo)
 
-    assert_ko(ErrorCode.A01, res)
+    assert_ko(IdNotFoundResponse.internal_code, res)
     assert res.json()["id"] == id
 
 

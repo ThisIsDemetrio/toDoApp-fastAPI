@@ -1,7 +1,6 @@
-from app.error_handling import ErrorModel, return_error
 from app.Client import Client
-from app.ErrorCode import ErrorCode
 from app.get_context import Context
+from app.responses.UsernameAlreadyTaken import UsernameAlreadyTaken
 from models import Signup
 from passlib.context import CryptContext
 from models.Token import Token
@@ -12,13 +11,15 @@ def get_password_hash(pwd_context, password):
     return pwd_context.hash(password)
 
 
-def create_user_and_generate_token(ctx: Context, data: Signup) -> Token | ErrorModel:
+def create_user_and_generate_token(
+    ctx: Context, data: Signup
+) -> Token | UsernameAlreadyTaken:
     pwd_context: CryptContext = ctx.get("pwd_context")
     client: Client = ctx.get("client")
 
     user = get_user(client, data.username)
     if user:
-        return return_error(ErrorCode.Y00)
+        return UsernameAlreadyTaken(data.username)
 
     client.get_users_collection().insert_one(
         {

@@ -1,0 +1,19 @@
+from fastapi import status
+
+from app.responses.BaseResponse import BaseResponse
+
+
+class RemainderNotFoundResponse(BaseResponse):
+    detail_message = "remainderNotFound"
+    internal_code = "C03"
+    status_code = status.HTTP_200_OK
+
+    def __init__(self, id: str, remainder: str):
+        super().__init__(
+            status_code=self.status_code,
+            internal_status="KO",
+            internal_code=self.internal_code,
+            detail_message=self.detail_message,
+            id=id,
+            remainder=remainder,
+        )

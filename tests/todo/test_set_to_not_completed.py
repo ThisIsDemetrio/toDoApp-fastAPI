@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import status
 
-from app.ErrorCode import ErrorCode
 from app.get_context import get_context
+from app.responses.NotCompletedYetResponse import NotCompletedYetResponse
 from main import app
 from services.auth.utils import get_current_active_user
 from tests.utils import (
@@ -40,7 +41,7 @@ def test_set_to_not_complete():
     id = "10003"
     res = client.patch(f"/todo/setToNotCompleted/{id}")
 
-    assert res.status_code == 200
+    assert res.status_code == status.HTTP_200_OK
     assert res.json()["status"] == "OK"
 
     updated_doc = get_todo_document_by_id(id)
@@ -51,7 +52,7 @@ def test_fail_set_to_not_complete_if_not_completed_yet():
     id = "10002"
     res = client.patch(f"/todo/setToNotCompleted/{id}")
 
-    assert_ko(ErrorCode.C02, res)
+    assert_ko(NotCompletedYetResponse.internal_code, res)
 
     updated_doc = get_todo_document_by_id(id)
     assert updated_doc["completed"] is False
@@ -61,7 +62,7 @@ def test_fail_to_set_to_not_complete_another_user_todo():
     id = "10004"
     res = client.patch(f"/todo/setToNotCompleted/{id}")
 
-    assert_ko(ErrorCode.C02, res)
+    assert_ko(NotCompletedYetResponse.internal_code, res)
 
     updated_doc = get_todo_document_by_id(id)
     assert updated_doc["completed"] is False

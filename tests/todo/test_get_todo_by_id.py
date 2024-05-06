@@ -1,8 +1,9 @@
 import pytest
 from fastapi.testclient import TestClient
+from fastapi import status
 
-from app.ErrorCode import ErrorCode
 from app.get_context import get_context
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
 from main import app
 from services.auth.utils import get_current_active_user
 from tests.utils import (
@@ -39,7 +40,7 @@ def test_get_document_by_id():
     id = "10001"
     res = client.get(f"/todo/{id}")
 
-    assert res.status_code == 200
+    assert res.status_code == status.HTTP_200_OK
     assert res.json()["result"]["id"] == id
     assert res.json()["result"]["title"] == "Call the dentist"
     assert res.json()["result"]["category"] == "health"
@@ -48,8 +49,8 @@ def test_get_document_by_id():
 def test_fail_to_get_document_by_id():
     res = client.get("/todo/notadocument")
 
-    assert res.status_code == 200
-    assert_ko(ErrorCode.A01, res)
+    assert res.status_code == status.HTTP_200_OK
+    assert_ko(IdNotFoundResponse.internal_code, res)
     assert res.json()["id"] == "notadocument"
 
 
@@ -57,6 +58,6 @@ def test_fail_get_document_of_another_user():
     id = "10004"
     res = client.get(f"/todo/{id}")
 
-    assert res.status_code == 200
-    assert_ko(ErrorCode.A01, res)
+    assert res.status_code == status.HTTP_200_OK
+    assert_ko(IdNotFoundResponse.internal_code, res)
     assert res.json()["id"] == "10004"

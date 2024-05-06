@@ -1,6 +1,7 @@
-from app.Client import Client, ReturnModel
-from app.error_handling import ErrorModel, return_error
-from app.ErrorCode import ErrorCode
+from app.Client import Client
+from app.responses.IdNotFoundResponse import IdNotFoundResponse
+from app.responses.NotExecutedResponse import NotExecutedResponse
+from app.responses.SuccessResponse import SuccessResponse
 
 
 async def update_remainder_to_todo(
@@ -9,7 +10,7 @@ async def update_remainder_to_todo(
     id: str,
     old_remainder: str,
     new_remainder: str,
-) -> ReturnModel | ErrorModel:
+) -> SuccessResponse | IdNotFoundResponse | NotExecutedResponse:
     """
     Change a remainder, replacing an existing one with a new one, to an existing "todo" document
     """
@@ -21,13 +22,14 @@ async def update_remainder_to_todo(
     )
     if pull_result.modified_count != 1:
         # TODO: Is this error because the remainder didn't exist, or the document has not been found?
-        return return_error(ErrorCode.A01)
+        return IdNotFoundResponse(id=id)
 
     push_result = collection.update_one(
         {"id": id, "user": username}, {"$push": {"remainders": new_remainder}}
     )
+
     if push_result.modified_count == 1:
-        return {"status": "OK", "result": id}
+        return SuccessResponse(result=id)
     else:
         # TODO: What can happen to have an unhandled error?
-        return return_error(ErrorCode.U00)
+        return NotExecutedResponse()

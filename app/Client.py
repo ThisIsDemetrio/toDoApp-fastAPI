@@ -1,11 +1,5 @@
-from typing import Any
 from pymongo import MongoClient
 from pymongo.collection import Collection
-
-
-class ReturnModel:
-    status = "OK"
-    result: str | Any
 
 
 class Client:

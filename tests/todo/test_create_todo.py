@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+from fastapi import status
 
 from app.get_context import get_context
 from main import app
@@ -28,7 +29,7 @@ def test_add_document():
 
     res = client.post("/todo/", json=todo)
 
-    assert res.status_code == 200
+    assert res.status_code == status.HTTP_200_OK
     assert res.json()["status"] == "OK"
     doc_id = res.json()["result"]
     assert doc_id is not None
