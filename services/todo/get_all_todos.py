@@ -11,6 +11,7 @@ async def get_all_todos(
     username: str,
     before: Optional[str] = None,
     after: Optional[str] = None,
+    completed: Optional[bool] = None,
 ) -> SuccessResponse:
     """
     Search all the items in the database.
@@ -28,6 +29,9 @@ async def get_all_todos(
     collection: Collection = client.get_todo_collection()
 
     query = {"user": username}
+
+    if completed is not None:
+        query.update({"completed": completed})
     if len(timespan_query.keys()) > 0:
         query.update({"creationDate": timespan_query})
 

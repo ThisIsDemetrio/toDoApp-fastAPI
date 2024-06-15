@@ -32,6 +32,7 @@ async def get_all(
     ctx: Context,
     before: Optional[str] = None,
     after: Optional[str] = None,
+    completed: Optional[bool] = None,
 ):
     logger = ctx.get("logger")
     client = ctx.get("client")
@@ -44,7 +45,7 @@ async def get_all(
         return InvalidDateBadRequest(key="after", value=after)
 
     try:
-        return await get_all_todos(client, username, before, after)
+        return await get_all_todos(client, username, before, after, completed)
     except Exception as e:
         logger.error(f"GET / returned error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
