@@ -6,12 +6,16 @@ from app import Client
 from app.responses.SuccessResponse import SuccessResponse
 
 
+DEFAULT_LIMIT = 200
+
+
 async def get_all_todos(
     client: Client,
     username: str,
     before: Optional[str] = None,
     after: Optional[str] = None,
     completed: Optional[bool] = None,
+    limit: Optional[int] = None,
 ) -> SuccessResponse:
     """
     Search all the items in the database.
@@ -26,8 +30,6 @@ async def get_all_todos(
     if after is not None:
         timespan_query["$gte"] = after
 
-    collection: Collection = client.get_todo_collection()
-
     query = {"user": username}
 
     if completed is not None:
@@ -35,6 +37,9 @@ async def get_all_todos(
     if len(timespan_query.keys()) > 0:
         query.update({"creationDate": timespan_query})
 
-    # TODO: We're returning 1000 elements, but we should handle pagination or something
-    documents = collection.find(query, {"_id": 0}).limit(1000)
+    collection: Collection = client.get_todo_collection()
+    documents = collection.find(query, {"_id": 0}).limit(
+        limit or DEFAULT_LIMIT
+    )
+
     return SuccessResponse(result=list(documents))

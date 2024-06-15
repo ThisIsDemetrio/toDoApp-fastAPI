@@ -3,6 +3,7 @@ from typing import Annotated, List, Optional, Union
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.responses.InvalidDateBadRequest import InvalidDateBadRequest
+from app.responses.LimitNotValidBadRequest import LimitNotValidBadRequest
 from app.get_context import Context
 from models.Todo import ToDoModel
 from models.User import User
@@ -33,6 +34,7 @@ async def get_all(
     before: Optional[str] = None,
     after: Optional[str] = None,
     completed: Optional[bool] = None,
+    limit: Optional[str] = None,
 ):
     logger = ctx.get("logger")
     client = ctx.get("client")
@@ -44,8 +46,20 @@ async def get_all(
     if after is not None and not is_valid_iso_date(after):
         return InvalidDateBadRequest(key="after", value=after)
 
+    # Check if limit is of type int and it is positive
+    if limit is not None:
+        try:
+            limit = int(limit)
+        except ValueError:
+            return LimitNotValidBadRequest()
+
+        if limit <= 0:
+            return LimitNotValidBadRequest()
+
     try:
-        return await get_all_todos(client, username, before, after, completed)
+        return await get_all_todos(
+            client, username, before, after, completed, limit
+        )
     except Exception as e:
         logger.error(f"GET / returned error: {e}")
         raise HTTPException(status_code=500, detail="Internal Server Error")
