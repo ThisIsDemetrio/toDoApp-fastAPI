@@ -19,8 +19,6 @@ def get_context():
         schemes=["bcrypt"], deprecated="auto"
     )
 
-    print(settings.mongo_url)
-
     return {
         "settings": settings,
         "client": client,
