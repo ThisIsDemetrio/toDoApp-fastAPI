@@ -37,20 +37,27 @@ def setup_on_each_test():
 
 
 @pytest.mark.parametrize(
-    "expected_count,before,after",
+    "expected_count,before,after,completed",
     [
-        (7, None, None),
-        (4, None, "2021-11-17T00:00:00.000Z"),
-        (3, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z"),
-        (0, "1991-01-01T00:00:00.000Z", "1991-12-31T23:59:59.999Z"),
+        (7, None, None, None),
+        (4, None, "2021-11-17T00:00:00.000Z", None),
+        (3, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", None),
+        (0, "1991-01-01T00:00:00.000Z", "1991-12-31T23:59:59.999Z", None),
+        (2, None, None, True),
+        (5, None, None, False),
+        (1, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", True),
+        (2, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", False),
     ],
 )
-def test_get_all(expected_count, before, after):
+def test_get_all(expected_count, before, after, completed):
     url = "/todo"
     if before is not None:
         url = "?".join([url, f"before={before}"])
     if after is not None:
         url = ("?" if before is None else "&").join([url, f"after={after}"])
+    if completed is not None:
+        url = ("?" if before is None else "&").join([url, f"completed={"true" if completed else "false"}"])
+
     res = client.get(url)
 
     assert res.status_code == status.HTTP_200_OK
