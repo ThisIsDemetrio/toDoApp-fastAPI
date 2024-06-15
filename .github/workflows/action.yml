@@ -29,9 +29,10 @@ jobs:
           ruff --output-format=github .
 
       - name: Start MongoDB (in-memory)
-        uses: mongo/docker-mongo@v3
+        uses: supercharge/mongodb-github-action@1.11.0
         with:
-          uri: mongodb://localhost:27017
+          mongodb-version: "7.0"
+
 
       - name: Run Pytest
         run: pytest
