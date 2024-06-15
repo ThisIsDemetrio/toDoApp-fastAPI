@@ -37,19 +37,25 @@ def setup_on_each_test():
 
 
 @pytest.mark.parametrize(
-    "expected_count,before,after,completed",
+    "expected_count, before, after, completed, limit",
     [
-        (7, None, None, None),
-        (4, None, "2021-11-17T00:00:00.000Z", None),
-        (3, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", None),
-        (0, "1991-01-01T00:00:00.000Z", "1991-12-31T23:59:59.999Z", None),
-        (2, None, None, True),
-        (5, None, None, False),
-        (1, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", True),
-        (2, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", False),
+        # Simple case
+        (7, None, None, None, None),
+        # With before/after
+        (4, None, "2021-11-17T00:00:00.000Z", None, None),
+        (3, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", None, None),
+        (0, "1991-01-01T00:00:00.000Z", "1991-12-31T23:59:59.999Z", None, None),
+        # With completed
+        (2, None, None, True, None),
+        (5, None, None, False, None),
+        (1, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", True, None),
+        (2, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", False, None),
+        # With limit
+        (2, None, None, None, 2),
+        (1, "2021-11-16T23:59:59.999Z", "2021-11-06T00:00:00.000Z", None, 1),
     ],
 )
-def test_get_all(expected_count, before, after, completed):
+def test_get_all(expected_count, before, after, completed, limit):
     url = "/todo"
     if before is not None:
         url = "?".join([url, f"before={before}"])
@@ -57,6 +63,8 @@ def test_get_all(expected_count, before, after, completed):
         url = ("?" if before is None else "&").join([url, f"after={after}"])
     if completed is not None:
         url = ("?" if before is None else "&").join([url, f"completed={"true" if completed else "false"}"])
+    if limit is not None:
+        url = ("?" if before is None else "&").join([url, f"limit={limit}"])
 
     res = client.get(url)
 
@@ -86,3 +94,13 @@ def test_fail_for_get_all_with_invalid_dates(
     assert res.json()["detail"] == InvalidDateBadRequest.detail_message
     assert res.json()["key"] == invalidKey
     assert res.json()["value"] == after if invalidKey == "after" else before
+
+
+@pytest.mark.parametrize("limit", [0, -1, 1.5, "alfa", True])
+def test_fail_if_limit_is_negative(limit: str):
+    url = f"/todo?limit={limit}"
+    res = client.get(url)
+
+    assert res.status_code == 400
+    assert res.json()["detail"] == "limitNotValid"
+    
