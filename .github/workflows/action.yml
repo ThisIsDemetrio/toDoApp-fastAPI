@@ -1,0 +1,37 @@
+name: Python Tests with MongoDB
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel  # Upgrade pip first
+          pip install -r requirements.txt  # Install project dependencies
+      
+      - name: Lint with Ruff
+        run: |
+          pip install ruff
+          ruff --output-format=github .
+
+      - name: Start MongoDB (in-memory)
+        uses: mongo/docker-mongo@v3
+        with:
+          uri: mongodb://localhost:27017
+
+      - name: Run Pytest
+        run: pytest
