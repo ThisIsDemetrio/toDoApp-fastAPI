@@ -11,7 +11,7 @@ from tests.utils import (
 )
 
 client = TestClient(app)
-app.dependency_overrides[get_context] = get_context_for_tests
+# app.dependency_overrides[get_context] = get_context_for_tests
 app.dependency_overrides[get_current_active_user] = get_current_user_for_tests
 
 

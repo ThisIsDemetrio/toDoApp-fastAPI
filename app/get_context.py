@@ -15,7 +15,11 @@ def get_context():
     settings: Settings = Settings()
     logger: Logger = Logger(settings.log_level).get_logger()
     client: Client = Client(settings.mongo_url, settings.database_name)
-    pwd_context: CryptContext = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    pwd_context: CryptContext = CryptContext(
+        schemes=["bcrypt"], deprecated="auto"
+    )
+
+    print(settings.mongo_url)
 
     return {
         "settings": settings,

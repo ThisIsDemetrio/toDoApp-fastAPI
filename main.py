@@ -24,8 +24,8 @@ async def db_health(ctx: Context):
     client: Client = ctx.get("client")
 
     logger.debug("DB Health check requested")
-    documents_in_config_coll = client.get_config_collection().estimated_document_count(
-        {}
+    documents_in_config_coll = (
+        client.get_config_collection().estimated_document_count({})
     )
 
     return {"status": "OK", "existingConfigs": documents_in_config_coll}
