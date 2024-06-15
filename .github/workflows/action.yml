@@ -33,6 +33,7 @@ jobs:
         with:
           mongodb-version: "7.0"
 
-
       - name: Run Pytest
         run: pytest
+        env:
+          MONGO_URL: mongodb://localhost:27017
